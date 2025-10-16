@@ -1,11 +1,152 @@
 import { FileSpreadsheet, Loader2 } from 'lucide-react';
 import { useSpreadSheet } from '../hooks/useSpreadSheet';
 import SpreadSheetEditor from '../components/SpreadSheetEditor';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 const SpreadSheetEditorPage = () => {
-  const { containerRef, loading, debugInfo, onEventCallbackRef } = useSpreadSheet();
-  const { containerRef: containerRef2, loading: loading2, debugInfo: debugInfo2, onEventCallbackRef: onEventCallbackRef2 } = useSpreadSheet();
+  const { containerRef, loading, debugInfo, onEventCallbackRef, designerRef, applyCellValue: applyCellValue1, applySelection: applySelection1, applyRangeValues: applyRangeValues1, applyCellFormula: applyCellFormula1, applyCellMerge: applyCellMerge1, applyCellUnmerge: applyCellUnmerge1, applyPaste: applyPaste1, applyDelete: applyDelete1, applyRangeOperation: applyRangeOperation1,
+    getProcessedData: getProcessedData1,
+    getRawData: getRawData1,
+    setProcessedData: setProcessedData1,
+    setRawData: setRawData1,
+    getStylesAndMerges: getStylesAndMerges1,
+    setStylesAndMerges: setStylesAndMerges1,
+    getCharts: getCharts1,
+    setCharts: setCharts1,
+    resetMergingStatus: resetMergingStatus1,
+   } = useSpreadSheet();
+  const { containerRef: containerRef2, loading: loading2, debugInfo: debugInfo2, onEventCallbackRef: onEventCallbackRef2, designerRef: designerRef2, applyCellValue: applyCellValue2, applySelection: applySelection2, applyRangeValues: applyRangeValues2, applyCellFormula: applyCellFormula2, applyCellMerge: applyCellMerge2, applyCellUnmerge: applyCellUnmerge2, applyPaste: applyPaste2, applyDelete: applyDelete2, applyRangeOperation: applyRangeOperation2,
+    getProcessedData: getProcessedData2,
+    getRawData: getRawData2,
+    setProcessedData: setProcessedData2,
+    setRawData: setRawData2,
+    getStylesAndMerges: getStylesAndMerges2,
+    setStylesAndMerges: setStylesAndMerges2,
+    getCharts: getCharts2,
+    setCharts: setCharts2,
+    resetMergingStatus: resetMergingStatus2,
+   } = useSpreadSheet();
+
+  // Store clipboard data for paste operations (currently not used with simplified approach)
+  const clipboardDataRef = useRef(null);
+  const clipboardDataRef2 = useRef(null);
+  
+  // Store copied data for internal copy/paste operations (currently not used)
+  const copiedDataRef = useRef(null);
+  const copiedDataRef2 = useRef(null);
+
+  const syncCellRange = (sourceRange, targetRange, {
+    isValue = true,
+    isFormula = true,
+    isStyles = true,
+  } = (options || {})) => {
+
+    if (isValue) {
+      const values = getProcessedData1(sourceRange.row, sourceRange.col, sourceRange.rowCount, sourceRange.colCount);
+      setProcessedData2(targetRange.row, targetRange.col, values);
+    }
+    
+    if (isFormula) {
+      const formulas = getRawData1(sourceRange.row, sourceRange.col, sourceRange.rowCount, sourceRange.colCount);
+      setRawData2(targetRange.row, targetRange.col, formulas);
+    } 
+
+    if (isStyles) {
+      const { styles, merges } = getStylesAndMerges1(sourceRange.row, sourceRange.col, sourceRange.rowCount, sourceRange.colCount);
+      setStylesAndMerges2(targetRange.row, targetRange.col, sourceRange.rowCount, sourceRange.colCount, styles, merges);
+    }
+  }
+
+
+  if (onEventCallbackRef && !onEventCallbackRef.current) {
+    onEventCallbackRef.current = (event) => {
+      console.log('Event from Editor 1:', event.detail.eventType, event.detail);
+      
+      // Synchronize actions from editor 1 to editor 2
+      const { eventType, lastEvent } = event.detail;
+      
+      switch (eventType) {
+        case 'ValueChanged':
+          if (lastEvent.newValue !== undefined && lastEvent.row !== undefined && lastEvent.col !== undefined) {
+            // Check if the value is a formula (starts with '=')
+            if (typeof lastEvent.newValue === 'string' && lastEvent.newValue.startsWith('=')) {
+              console.log('Syncing formula change to Editor 2:', lastEvent.row, lastEvent.col, lastEvent.newValue);
+              syncCellRange(
+                { row: lastEvent.row, col: lastEvent.col, rowCount: 1, colCount: 1 },
+                { row: lastEvent.row, col: lastEvent.col, rowCount: 1, colCount: 1 },
+                { isFormula: true, isValue: true, isStyles: false },
+              );
+            } else {
+              console.log('Syncing cell value change to Editor 2:', lastEvent.row, lastEvent.col, lastEvent.newValue);
+              syncCellRange(
+                { row: lastEvent.row, col: lastEvent.col, rowCount: 1, colCount: 1 },
+                { row: lastEvent.row, col: lastEvent.col, rowCount: 1, colCount: 1 },
+                { isValue: true, isFormula: true, isStyles: false },
+              );
+            }
+          }
+          break;
+        case 'UserFormulaEntered':
+          if (lastEvent.formula !== undefined && lastEvent.row !== undefined && lastEvent.col !== undefined) {
+            console.log('Syncing formula change to Editor 2:', lastEvent.row, lastEvent.col, lastEvent.formula);
+            syncCellRange(
+              { row: lastEvent.row, col: lastEvent.col, rowCount: 1, colCount: 1 },
+              { row: lastEvent.row, col: lastEvent.col, rowCount: 1, colCount: 1 },
+              { isFormula: true, isValue: true, isStyles: false }
+            );
+          }
+          break;
+        case 'SelectionChanged':
+          // Selection changes are not synced to avoid cursor jumping
+          break;
+        case 'RangeChanged':
+          if (lastEvent.propertyName === 'span' && lastEvent.action === 'add') {
+            // Cell merge operation
+            console.log('Syncing cell merge to Editor 2:', lastEvent.row, lastEvent.col, lastEvent.rowCount, lastEvent.colCount);
+            syncCellRange(
+              { row: lastEvent.row, col: lastEvent.col, rowCount: lastEvent.rowCount || 1, colCount: lastEvent.colCount || 1 },
+              { row: lastEvent.row, col: lastEvent.col, rowCount: lastEvent.rowCount || 1, colCount: lastEvent.colCount || 1 },
+              { isValue: false, isFormula: false, isStyles: true }
+            );
+          } else if (lastEvent.propertyName === 'span' && lastEvent.action === 'remove') {
+            // Cell unmerge operation
+            console.log('Syncing cell unmerge to Editor 2:', lastEvent.row, lastEvent.col);
+            syncCellRange(
+              { row: lastEvent.row, col: lastEvent.col, rowCount: lastEvent.rowCount || 1, colCount: lastEvent.colCount || 1 },
+              { row: lastEvent.row, col: lastEvent.col, rowCount: lastEvent.rowCount || 1, colCount: lastEvent.colCount || 1 },
+              { isValue: false, isFormula: false, isStyles: true }
+            );
+          } else if (lastEvent.action === 'clear' || lastEvent.action === 2) {
+            // Cell/range clear operation
+            console.log('Syncing cell clear to Editor 2:', lastEvent.row, lastEvent.col, lastEvent.rowCount, lastEvent.colCount);
+            syncCellRange(
+              { row: lastEvent.row, col: lastEvent.col, rowCount: lastEvent.rowCount || 1, colCount: lastEvent.colCount || 1 },
+              { row: lastEvent.row, col: lastEvent.col, rowCount: lastEvent.rowCount || 1, colCount: lastEvent.colCount || 1 },
+              { isValue: true, isFormula: true, isStyles: false }
+            );
+          }
+          break;
+        case 'ClipboardPasted':
+          console.log('ClipboardPasted event triggered, lastEvent:', lastEvent);
+          if (lastEvent.cellRange.row !== undefined && lastEvent.cellRange.col !== undefined) {
+            // Read the pasted data from the source sheet and sync to target
+            console.log('Syncing paste operation to Editor 2:', lastEvent.cellRange.row, lastEvent.cellRange.col);
+            syncCellRange(
+              { row: lastEvent.cellRange.row, col: lastEvent.cellRange.col, rowCount: lastEvent.cellRange.rowCount || 1, colCount: lastEvent.cellRange.colCount || 1 },
+              { row: lastEvent.cellRange.row, col: lastEvent.cellRange.col, rowCount: lastEvent.cellRange.rowCount || 1, colCount: lastEvent.cellRange.colCount || 1 },
+              { isValue: true, isFormula: true, isStyles: true }
+            );
+          }
+          break;
+        case 'CellChanged':
+          // Cell property changes - may not need special handling for sync
+          break;
+        default:
+          // Other events can be handled here
+          break;
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -19,18 +160,6 @@ const SpreadSheetEditorPage = () => {
       </div>
     );
   }
-
-  if (onEventCallbackRef && !onEventCallbackRef.current) {
-    onEventCallbackRef.current = (event) => {
-      console.log('Event:', event.detail.eventType, event.detail);
-    }
-  };
-
-  if (onEventCallbackRef2 && !onEventCallbackRef2.current) {
-    onEventCallbackRef2.current = (event) => {
-      console.log('Event2:', event.detail.eventType, event.detail);
-    }
-  };
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>

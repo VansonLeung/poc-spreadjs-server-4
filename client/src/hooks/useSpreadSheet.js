@@ -253,9 +253,22 @@ export const useSpreadSheet = () => {
                                 if (typeof args.colCount === 'number') eventData.colCount = args.colCount;
                                 if (args.newValue !== undefined) eventData.newValue = args.newValue;
                                 if (args.oldValue !== undefined) eventData.oldValue = args.oldValue;
+                                if (args.formula !== undefined) eventData.formula = args.formula;
                                 if (args.propertyName) eventData.propertyName = args.propertyName;
                                 if (args.action) eventData.action = args.action;
                                 if (args.sheetName) eventData.sheetName = args.sheetName;
+                                if (args.cellRange) eventData.cellRange = args.cellRange;
+                                if (args.clipboardData) eventData.clipboardData = args.clipboardData;
+                                if (args.pasteOption) eventData.pasteOption = args.pasteOption;
+                                if (args.range) {
+                                    eventData.range = args.range;
+                                    // Extract range properties if it's a Range object
+                                    if (args.range.row !== undefined) eventData.row = args.range.row;
+                                    if (args.range.col !== undefined) eventData.col = args.range.col;
+                                    if (args.range.rowCount !== undefined) eventData.rowCount = args.range.rowCount;
+                                    if (args.range.colCount !== undefined) eventData.colCount = args.range.colCount;
+                                }
+                                if (args.sheet) eventData.sheet = args.sheet;
                             }
                             
                             const sheet = spread.getActiveSheet();
@@ -298,6 +311,411 @@ export const useSpreadSheet = () => {
             }
         };
     }, []); // No dependencies, check periodically
+    const applyCellValue = (row, col, value, sheetName) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
+            if (sheet) {
+                sheet.setValue(row, col, value);
+            }
+        }
+    };
+
+    const applySelection = (row, col, rowCount = 1, colCount = 1, sheetName) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
+            if (sheet) {
+                const range = new window.GC.Spread.Sheets.Range(row, col, rowCount, colCount);
+                sheet.setSelection(range);
+            }
+        }
+    };
+
+    const applyRangeValues = (row, col, rowCount, colCount, values, sheetName) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
+            if (sheet) {
+                sheet.setArray(row, col, values);
+            }
+        }
+    };
+
+    const applyCellFormula = (row, col, formula, sheetName) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
+            if (sheet) {
+                sheet.setFormula(row, col, formula);
+            }
+        }
+    };
+
+    const applyCellMerge = (row, col, rowCount, colCount, sheetName) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
+            if (sheet) {
+                const range = new window.GC.Spread.Sheets.Range(row, col, rowCount, colCount);
+                sheet.addSpan(range.row, range.col, range.rowCount, range.colCount);
+            }
+        }
+    };
+
+    const applyCellUnmerge = (row, col, sheetName) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
+            if (sheet) {
+                sheet.removeSpan(row, col);
+            }
+        }
+    };
+
+    const applyPaste = (row, col, clipboardData, pasteOption, sheetName) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
+            if (sheet && clipboardData) {
+                try {
+                    console.log('Applying paste with clipboardData:', clipboardData);
+                    
+                    // Handle different clipboard data formats
+                    let data = null;
+                    let isArray = false;
+                    
+                    if (clipboardData.data && Array.isArray(clipboardData.data)) {
+                        // Format: { data: [[...], [...]] }
+                        data = clipboardData.data;
+                        isArray = true;
+                    } else if (Array.isArray(clipboardData)) {
+                        // Format: [[...], [...]]
+                        data = clipboardData;
+                        isArray = true;
+                    } else if (clipboardData.text) {
+                        // Format: { text: "value" }
+                        data = clipboardData.text;
+                        isArray = false;
+                    } else if (typeof clipboardData === 'string') {
+                        // Format: "value"
+                        data = clipboardData;
+                        isArray = false;
+                    }
+                    
+                    if (data) {
+                        if (isArray && data.length > 0) {
+                            // Use applyRangeValues for array data
+                            const rowCount = data.length;
+                            const colCount = data[0] ? data[0].length : 1;
+                            console.log(`Setting array data: ${rowCount}x${colCount} at (${row},${col})`);
+                            applyRangeValues(row, col, rowCount, colCount, data, sheetName);
+                        } else {
+                            // For single values, use setValue
+                            console.log(`Setting single value at (${row},${col}):`, data);
+                            sheet.setValue(row, col, data);
+                        }
+                    } else {
+                        console.warn('No usable data found in clipboardData');
+                    }
+                } catch (error) {
+                    console.error('Error applying paste operation:', error);
+                    // Fallback: try to set a basic value if paste fails
+                    try {
+                        if (clipboardData && clipboardData.text) {
+                            sheet.setValue(row, col, clipboardData.text);
+                        } else if (typeof clipboardData === 'string') {
+                            sheet.setValue(row, col, clipboardData);
+                        }
+                    } catch (fallbackError) {
+                        console.error('Fallback paste also failed:', fallbackError);
+                    }
+                }
+            } else {
+                console.warn('applyPaste called with invalid parameters:', { row, col, clipboardData, pasteOption, sheetName });
+            }
+        }
+    };
+
+    const applyDelete = (row, col, rowCount, colCount, sheetName) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
+
+            if (sheet) {
+                sheet.clear(row, col, rowCount || 1, colCount || 1, window.GC.Spread.Sheets.SheetArea.viewport, window.GC.Spread.Sheets.StorageType.All);
+            }
+        }
+    };
+
+    const applyRangeOperation = (row, col, rowCount, colCount, operation, sheetName) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
+            if (sheet) {
+                const range = new window.GC.Spread.Sheets.Range(row, col, rowCount, colCount);
+                // Handle different range operations based on the operation parameter
+                switch (operation) {
+                    case 'merge':
+                        sheet.addSpan(range.row, range.col, range.rowCount, range.colCount);
+                        break;
+                    case 'unmerge':
+                        // Unmerge all cells in the range
+                        for (let r = range.row; r < range.row + range.rowCount; r++) {
+                            for (let c = range.col; c < range.col + range.colCount; c++) {
+                                sheet.removeSpan(r, c);
+                            }
+                        }
+                        break;
+                    case 'clear':
+                        sheet.clear(row, col, rowCount || 1, colCount || 1, window.GC.Spread.Sheets.SheetArea.viewport, window.GC.Spread.Sheets.StorageType.All);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    };
+
+
+
+
+    const getSheet = (sheetName) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
+            if (sheet) {
+                return sheet;
+            }
+        }
+        return null;
+    }
+
+
+
+    const getProcessedData = (startRow, startCol, rowCount, colCount, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            return sheet.getArray(startRow, startCol, rowCount, colCount);
+        }
+        return [];
+    };
+
+    const getRawData = (startRow, startCol, rowCount, colCount, sheetName) => {
+        const sheet = getSheet(sheetName);
+        const formulas = [];
+        if (sheet) {
+            return sheet.getArray(startRow, startCol, rowCount, colCount, true);
+        }
+        return formulas;
+    };
+
+    const setProcessedData = (startRow, startCol, values, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            sheet.setArray(startRow, startCol, values);
+        }
+    };
+
+    const setRawData = (startRow, startCol, formulas, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            sheet.setArray(startRow, startCol, formulas, true);
+        }
+    };
+
+    const getStylesAndMerges = (startRow, startCol, rowCount = 1, colCount = 1, sheetName) => {
+        const styles = [];
+        const merges = [];
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            for (let row = 0; row < rowCount; row++) {
+                const styleRow = [];
+                for (let col = 0; col < colCount; col++) {
+                    const style = sheet.getStyle(startRow + row, startCol + col);
+                    const styleData = {
+                        backColor: style.backColor,
+                        foreColor: style.foreColor,
+                        font: style.font ? style.font.toString() : null,
+                        hAlign: style.hAlign,
+                        vAlign: style.vAlign,
+                        wordWrap: style.wordWrap,
+                        textDecoration: style.textDecoration,
+                        borderTop: style.borderTop ? {
+                            lineStyle: style.borderTop.lineStyle,
+                            color: style.borderTop.color,
+                            weight: style.borderTop.weight
+                        } : null,
+                        borderBottom: style.borderBottom ? {
+                            lineStyle: style.borderBottom.lineStyle,
+                            color: style.borderBottom.color,
+                            weight: style.borderBottom.weight
+                        } : null,
+                        borderLeft: style.borderLeft ? {
+                            lineStyle: style.borderLeft.lineStyle,
+                            color: style.borderLeft.color,
+                            weight: style.borderLeft.weight
+                        } : null,
+                        borderRight: style.borderRight ? {
+                            lineStyle: style.borderRight.lineStyle,
+                            color: style.borderRight.color,
+                            weight: style.borderRight.weight
+                        } : null,
+                    }
+                    styleRow.push(styleData);
+                }
+                styles.push(styleRow);
+            }
+
+            const range = new window.GC.Spread.Sheets.Range(startRow, startCol, rowCount, colCount);
+            const spans = sheet.getSpans(range);
+            for (const span of spans) {
+                merges.push({
+                    row: span.row,
+                    col: span.col,
+                    rowCount: span.rowCount,
+                    colCount: span.colCount
+                });
+            }
+        }
+        return { styles, merges };
+    };
+
+    const setStylesAndMerges = (startRow, startCol, rowCount, colCount, styles, merges, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            // Set styles
+            for (let row = 0; row < styles.length; row++) {
+                for (let col = 0; col < styles[row].length; col++) {
+                    const style = styles[row][col];
+                    const styleObj = new window.GC.Spread.Sheets.Style();
+                    if (style.backColor) styleObj.backColor = style.backColor;
+                    if (style.foreColor) styleObj.foreColor = style.foreColor;
+                    if (style.font) styleObj.font = style.font;
+                    if (style.hAlign) styleObj.hAlign = style.hAlign;
+                    if (style.vAlign) styleObj.vAlign = style.vAlign;
+                    if (style.wordWrap !== undefined) styleObj.wordWrap = style.wordWrap;
+                    if (style.textDecoration) styleObj.textDecoration = style.textDecoration;
+                    if (style.borderTop) {
+                        styleObj.borderTop = new window.GC.Spread.Sheets.LineBorder(style.borderTop.color, style.borderTop.lineStyle, style.borderTop.weight);
+                    }
+                    if (style.borderBottom) {
+                        styleObj.borderBottom = new window.GC.Spread.Sheets.LineBorder(style.borderBottom.color, style.borderBottom.lineStyle, style.borderBottom.weight);
+                    }
+                    if (style.borderLeft) {
+                        styleObj.borderLeft = new window.GC.Spread.Sheets.LineBorder(style.borderLeft.color, style.borderLeft.lineStyle, style.borderLeft.weight);
+                    }
+                    if (style.borderRight) {
+                        styleObj.borderRight = new window.GC.Spread.Sheets.LineBorder(style.borderRight.color, style.borderRight.lineStyle, style.borderRight.weight);
+                    }
+                    sheet.setStyle(startRow + row, startCol + col, styleObj);
+                }
+            }
+
+            // Set merged cells
+            const range = new window.GC.Spread.Sheets.Range(startRow, startCol, rowCount, colCount);
+            const spans = sheet.getSpans(range);
+            for (const span of spans) {
+                sheet.removeSpan(span.row, span.col);
+            }
+
+            for (const merge of merges) {
+                sheet.addSpan(merge.row, merge.col, merge.rowCount, merge.colCount);
+            }
+        }
+    };
+
+    const getCharts = (sheetName) => {
+        const sheet = getSheet(sheetName);
+        const chartsData = [];
+        if (sheet) {
+            const charts = sheet.getCharts();
+
+            charts.forEach((chart) => {
+                const chartData = chart.getData();
+                const chartPosition = chart.getPosition();
+                chartsData.push({
+                    type: chartData.type,
+                    data: chartData.data,
+                    position: {
+                        x: chartPosition.x,
+                        y: chartPosition.y,
+                        width: chartPosition.width,
+                        height: chartPosition.height,
+                    }
+                });
+            });
+        }
+        return chartsData;
+    };
+
+    const setCharts = (chartsData, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            chartsData.forEach((chart) => {
+                sheet.addChart({
+                    type: chart.type,
+                    data: chart.data,
+                    position: chart.position,
+                });
+            });
+        }
+    };
+
+    // const copyProcessedData = (startRow, startCol, rowCount, colCount) => {
+    //     const values = getProcessedData(startRow, startCol, rowCount, colCount);
+    //     setProcessedData(startRow, startCol, values);
+    // };
+
+    // const copyRawData = (startRow, startCol, rowCount, colCount) => {
+    //     const formulas = getRawData(startRow, startCol, rowCount, colCount);
+    //     setRawData(startRow, startCol, formulas);
+    // };
+
+    const resetMergingStatus = (startRow, startCol, rowCount, colCount, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            for (let row = 0; row < rowCount; row++) {
+                for (let col = 0; col < colCount; col++) {
+                    sheet.getCell(startRow + row, startCol + col).unmerge();
+                }
+            }
+        }
+    };
+
+
+
+
+
+
+
+
+
+
     
-    return { containerRef, loading, debugInfo, onEventCallbackRef };
+    return { 
+        containerRef, 
+        loading, 
+        debugInfo, 
+        onEventCallbackRef,
+        designerRef,
+        applyCellValue,
+        applySelection,
+        applyRangeValues,
+        applyCellFormula,
+        applyCellMerge,
+        applyCellUnmerge,
+        applyPaste,
+        applyDelete,
+        applyRangeOperation,
+        getProcessedData,
+        getRawData,
+        setProcessedData,
+        setRawData,
+        getStylesAndMerges,
+        setStylesAndMerges,
+        getCharts,
+        setCharts,
+        resetMergingStatus,
+    };
 };

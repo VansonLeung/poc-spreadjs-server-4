@@ -36,6 +36,15 @@ const SpreadSheetEditor = ({ containerRef, debugInfo }) => {
                 ? '[Object]'
                 : String(debugInfo.lastEvent.newValue)}</div>
             )}
+            {debugInfo.lastEvent.formula !== undefined && (
+              <div>Formula: {String(debugInfo.lastEvent.formula)}</div>
+            )}
+            {debugInfo.lastEvent.clipboardData !== undefined && (
+              <div>Clipboard: {debugInfo.lastEvent.clipboardData ? 'Has Data' : 'Empty'}</div>
+            )}
+            {debugInfo.lastEvent.cellRange && (
+              <div>Range: {JSON.stringify(debugInfo.lastEvent.cellRange)}</div>
+            )}
             {debugInfo.lastEvent.action && <div>Action: {debugInfo.lastEvent.action}</div>}
             {debugInfo.lastEvent.propertyName && <div>Property: {debugInfo.lastEvent.propertyName}</div>}
             <div>Time: {debugInfo.lastEvent.timestamp}</div>
