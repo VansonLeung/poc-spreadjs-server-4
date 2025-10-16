@@ -1,0 +1,49 @@
+import { FileSpreadsheet, Loader2 } from 'lucide-react';
+import { useSpreadSheet } from '../hooks/useSpreadSheet';
+import SpreadSheetEditor from '../components/SpreadSheetEditor';
+import { useEffect, useRef } from 'react';
+
+const SpreadSheetEditorPageTemplateCreation = () => {
+  const { containerRef, loading, debugInfo, onEventCallbackRef, designerRef,
+    getSheetNames,
+    getSheetJSON,
+    setSheetJSON,
+    getSheetCSV,
+    setSheetCSV,
+    getProcessedDataOfWholeSheet,
+    getRawDataOfWholeSheet,
+    getProcessedData,
+    getRawData,
+    setProcessedData,
+    setRawData,
+    getStylesAndMerges,
+    setStylesAndMerges,
+    getCharts,
+    setCharts,
+    resetMergingStatus,
+  } = useSpreadSheet();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-center">
+          <FileSpreadsheet className="w-24 h-24 mx-auto text-indigo-600 mb-4" />
+          <Loader2 className="w-8 h-8 mx-auto mb-4 text-indigo-600 animate-spin" />
+          <h1 className="text-2xl font-bold text-gray-800">Finance Spreadsheet Platform</h1>
+          <p className="text-gray-600 mt-2">Loading spreadsheet editor...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', height: '100vh' }}>
+      <div style={{ flex: 1, borderRight: '1px solid #ccc' }}>
+        <SpreadSheetEditor containerRef={containerRef} debugInfo={debugInfo} />
+      </div>
+    </div>
+  )
+
+};
+
+export default SpreadSheetEditorPageTemplateCreation;

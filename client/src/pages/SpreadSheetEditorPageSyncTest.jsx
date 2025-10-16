@@ -3,28 +3,30 @@ import { useSpreadSheet } from '../hooks/useSpreadSheet';
 import SpreadSheetEditor from '../components/SpreadSheetEditor';
 import { useEffect, useRef } from 'react';
 
-const SpreadSheetEditorPage = () => {
+const SpreadSheetEditorPageSyncTest = () => {
   const { containerRef, loading, debugInfo, onEventCallbackRef, designerRef,
-    getSheetNames,
-    getSheetJSON,
-    setSheetJSON,
-    getSheetCSV,
-    setSheetCSV,
-    getProcessedDataOfWholeSheet,
-    getRawDataOfWholeSheet,
-    getProcessedData,
-    getRawData,
-    setProcessedData,
-    setRawData,
-    getStylesAndMerges,
-    setStylesAndMerges,
-    getCharts,
-    setCharts,
-    resetMergingStatus,
+    getProcessedData: getProcessedData1,
+    getRawData: getRawData1,
+    setProcessedData: setProcessedData1,
+    setRawData: setRawData1,
+    getStylesAndMerges: getStylesAndMerges1,
+    setStylesAndMerges: setStylesAndMerges1,
+    getCharts: getCharts1,
+    setCharts: setCharts1,
+    resetMergingStatus: resetMergingStatus1,
    } = useSpreadSheet();
-
-
-
+  const { containerRef: containerRef2, loading: loading2, debugInfo: debugInfo2, onEventCallbackRef: onEventCallbackRef2, designerRef: designerRef2,
+    getProcessedData: getProcessedData2,
+    getRawData: getRawData2,
+    setProcessedData: setProcessedData2,
+    setRawData: setRawData2,
+    getStylesAndMerges: getStylesAndMerges2,
+    setStylesAndMerges: setStylesAndMerges2,
+    getCharts: getCharts2,
+    setCharts: setCharts2,
+    resetMergingStatus: resetMergingStatus2,
+   } = useSpreadSheet();
+   
   const syncCellRange = (sourceRange, targetRange, {
     isValue = true,
     isFormula = true,
@@ -32,21 +34,20 @@ const SpreadSheetEditorPage = () => {
   } = (options || {})) => {
 
     if (isValue) {
-      const values = getProcessedData(sourceRange.row, sourceRange.col, sourceRange.rowCount, sourceRange.colCount);
-      // setProcessedData2(targetRange.row, targetRange.col, values);
+      const values = getProcessedData1(sourceRange.row, sourceRange.col, sourceRange.rowCount, sourceRange.colCount);
+      setProcessedData2(targetRange.row, targetRange.col, values);
     }
     
     if (isFormula) {
-      const formulas = getRawData(sourceRange.row, sourceRange.col, sourceRange.rowCount, sourceRange.colCount);
-      // setRawData2(targetRange.row, targetRange.col, formulas);
+      const formulas = getRawData1(sourceRange.row, sourceRange.col, sourceRange.rowCount, sourceRange.colCount);
+      setRawData2(targetRange.row, targetRange.col, formulas);
     } 
 
     if (isStyles) {
-      const { styles, merges } = getStylesAndMerges(sourceRange.row, sourceRange.col, sourceRange.rowCount, sourceRange.colCount);
-      // setStylesAndMerges2(targetRange.row, targetRange.col, sourceRange.rowCount, sourceRange.colCount, styles, merges);
+      const { styles, merges } = getStylesAndMerges1(sourceRange.row, sourceRange.col, sourceRange.rowCount, sourceRange.colCount);
+      setStylesAndMerges2(targetRange.row, targetRange.col, sourceRange.rowCount, sourceRange.colCount, styles, merges);
     }
   }
-
 
 
   if (onEventCallbackRef && !onEventCallbackRef.current) {
@@ -157,9 +158,12 @@ const SpreadSheetEditorPage = () => {
       <div style={{ flex: 1, borderRight: '1px solid #ccc' }}>
         <SpreadSheetEditor containerRef={containerRef} debugInfo={debugInfo} />
       </div>
+      <div style={{ flex: 1, borderRight: '1px solid #ccc' }}>
+        {loading2 ? null : <SpreadSheetEditor containerRef={containerRef2} debugInfo={debugInfo2} /> }
+      </div>
     </div>
   )
 
 };
 
-export default SpreadSheetEditorPage;
+export default SpreadSheetEditorPageSyncTest;

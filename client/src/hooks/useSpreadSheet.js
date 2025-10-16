@@ -310,176 +310,9 @@ export const useSpreadSheet = () => {
                 designerRef.current = null;
             }
         };
-    }, []); // No dependencies, check periodically
-    const applyCellValue = (row, col, value, sheetName) => {
-        if (designerRef.current) {
-            const spread = designerRef.current.getWorkbook();
-            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
-            if (sheet) {
-                sheet.setValue(row, col, value);
-            }
-        }
-    };
+    }, []); // No
 
-    const applySelection = (row, col, rowCount = 1, colCount = 1, sheetName) => {
-        if (designerRef.current) {
-            const spread = designerRef.current.getWorkbook();
-            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
-            if (sheet) {
-                const range = new window.GC.Spread.Sheets.Range(row, col, rowCount, colCount);
-                sheet.setSelection(range);
-            }
-        }
-    };
-
-    const applyRangeValues = (row, col, rowCount, colCount, values, sheetName) => {
-        if (designerRef.current) {
-            const spread = designerRef.current.getWorkbook();
-            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
-            if (sheet) {
-                sheet.setArray(row, col, values);
-            }
-        }
-    };
-
-    const applyCellFormula = (row, col, formula, sheetName) => {
-        if (designerRef.current) {
-            const spread = designerRef.current.getWorkbook();
-            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
-            if (sheet) {
-                sheet.setFormula(row, col, formula);
-            }
-        }
-    };
-
-    const applyCellMerge = (row, col, rowCount, colCount, sheetName) => {
-        if (designerRef.current) {
-            const spread = designerRef.current.getWorkbook();
-            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
-            if (sheet) {
-                const range = new window.GC.Spread.Sheets.Range(row, col, rowCount, colCount);
-                sheet.addSpan(range.row, range.col, range.rowCount, range.colCount);
-            }
-        }
-    };
-
-    const applyCellUnmerge = (row, col, sheetName) => {
-        if (designerRef.current) {
-            const spread = designerRef.current.getWorkbook();
-            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
-            if (sheet) {
-                sheet.removeSpan(row, col);
-            }
-        }
-    };
-
-    const applyPaste = (row, col, clipboardData, pasteOption, sheetName) => {
-        if (designerRef.current) {
-            const spread = designerRef.current.getWorkbook();
-            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
-            if (sheet && clipboardData) {
-                try {
-                    console.log('Applying paste with clipboardData:', clipboardData);
-                    
-                    // Handle different clipboard data formats
-                    let data = null;
-                    let isArray = false;
-                    
-                    if (clipboardData.data && Array.isArray(clipboardData.data)) {
-                        // Format: { data: [[...], [...]] }
-                        data = clipboardData.data;
-                        isArray = true;
-                    } else if (Array.isArray(clipboardData)) {
-                        // Format: [[...], [...]]
-                        data = clipboardData;
-                        isArray = true;
-                    } else if (clipboardData.text) {
-                        // Format: { text: "value" }
-                        data = clipboardData.text;
-                        isArray = false;
-                    } else if (typeof clipboardData === 'string') {
-                        // Format: "value"
-                        data = clipboardData;
-                        isArray = false;
-                    }
-                    
-                    if (data) {
-                        if (isArray && data.length > 0) {
-                            // Use applyRangeValues for array data
-                            const rowCount = data.length;
-                            const colCount = data[0] ? data[0].length : 1;
-                            console.log(`Setting array data: ${rowCount}x${colCount} at (${row},${col})`);
-                            applyRangeValues(row, col, rowCount, colCount, data, sheetName);
-                        } else {
-                            // For single values, use setValue
-                            console.log(`Setting single value at (${row},${col}):`, data);
-                            sheet.setValue(row, col, data);
-                        }
-                    } else {
-                        console.warn('No usable data found in clipboardData');
-                    }
-                } catch (error) {
-                    console.error('Error applying paste operation:', error);
-                    // Fallback: try to set a basic value if paste fails
-                    try {
-                        if (clipboardData && clipboardData.text) {
-                            sheet.setValue(row, col, clipboardData.text);
-                        } else if (typeof clipboardData === 'string') {
-                            sheet.setValue(row, col, clipboardData);
-                        }
-                    } catch (fallbackError) {
-                        console.error('Fallback paste also failed:', fallbackError);
-                    }
-                }
-            } else {
-                console.warn('applyPaste called with invalid parameters:', { row, col, clipboardData, pasteOption, sheetName });
-            }
-        }
-    };
-
-    const applyDelete = (row, col, rowCount, colCount, sheetName) => {
-        if (designerRef.current) {
-            const spread = designerRef.current.getWorkbook();
-            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
-
-            if (sheet) {
-                sheet.clear(row, col, rowCount || 1, colCount || 1, window.GC.Spread.Sheets.SheetArea.viewport, window.GC.Spread.Sheets.StorageType.All);
-            }
-        }
-    };
-
-    const applyRangeOperation = (row, col, rowCount, colCount, operation, sheetName) => {
-        if (designerRef.current) {
-            const spread = designerRef.current.getWorkbook();
-            const sheet = sheetName ? spread.getSheetFromName(sheetName) : spread.getActiveSheet();
-            if (sheet) {
-                const range = new window.GC.Spread.Sheets.Range(row, col, rowCount, colCount);
-                // Handle different range operations based on the operation parameter
-                switch (operation) {
-                    case 'merge':
-                        sheet.addSpan(range.row, range.col, range.rowCount, range.colCount);
-                        break;
-                    case 'unmerge':
-                        // Unmerge all cells in the range
-                        for (let r = range.row; r < range.row + range.rowCount; r++) {
-                            for (let c = range.col; c < range.col + range.colCount; c++) {
-                                sheet.removeSpan(r, c);
-                            }
-                        }
-                        break;
-                    case 'clear':
-                        sheet.clear(row, col, rowCount || 1, colCount || 1, window.GC.Spread.Sheets.SheetArea.viewport, window.GC.Spread.Sheets.StorageType.All);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-    };
-
-
-
-
+    
     const getSheet = (sheetName) => {
         if (designerRef.current) {
             const spread = designerRef.current.getWorkbook();
@@ -492,6 +325,67 @@ export const useSpreadSheet = () => {
     }
 
 
+
+    const getSheetNames = () => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            return spread.getSheetNames();
+        }
+        return [];
+    }
+
+    const getSheetJSON = (sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            return sheet.toJSON();
+        }
+        return null;
+    }
+
+    const setSheetJSON = (json, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet && json) {
+            sheet.fromJSON(json);
+        }
+    }
+
+    const getSheetCSV = (sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            return sheet.toCSV();
+        }
+        return '';
+    }
+
+    const setSheetCSV = (csv, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet && csv) {
+            sheet.fromCSV(csv);
+        }
+    }
+
+
+
+    const getProcessedDataOfWholeSheet = (sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            const rowCount = sheet.getRowCount();
+            const colCount = sheet.getColumnCount();
+            return sheet.getArray(0, 0, rowCount, colCount);
+        }
+        return [];
+    };
+
+    const getRawDataOfWholeSheet = (sheetName) => {
+        const sheet = getSheet(sheetName);
+        const formulas = [];
+        if (sheet) {
+            const rowCount = sheet.getRowCount();
+            const colCount = sheet.getColumnCount();
+            return sheet.getArray(0, 0, rowCount, colCount, true);
+        }
+        return formulas;
+    };
 
     const getProcessedData = (startRow, startCol, rowCount, colCount, sheetName) => {
         const sheet = getSheet(sheetName);
@@ -699,15 +593,13 @@ export const useSpreadSheet = () => {
         debugInfo, 
         onEventCallbackRef,
         designerRef,
-        applyCellValue,
-        applySelection,
-        applyRangeValues,
-        applyCellFormula,
-        applyCellMerge,
-        applyCellUnmerge,
-        applyPaste,
-        applyDelete,
-        applyRangeOperation,
+        getSheetNames,
+        getSheetJSON,
+        setSheetJSON,
+        getSheetCSV,
+        setSheetCSV,
+        getProcessedDataOfWholeSheet,
+        getRawDataOfWholeSheet,
         getProcessedData,
         getRawData,
         setProcessedData,
