@@ -1,0 +1,266 @@
+{
+  "name": "Expenses",
+  "isSelected": false,
+  "activeRow": 6,
+  "activeCol": 7,
+  "visible": 1,
+  "theme": "Office",
+  "data": {
+    "dataTable": {
+      "0": {
+        "0": {
+          "value": "Category",
+          "style": {
+            "backColor": "#f0f0f0",
+            "foreColor": "#333",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold",
+            "fontSize": "12px",
+            "fontFamily": "Arial"
+          }
+        },
+        "1": {
+          "value": "Amount",
+          "style": {
+            "backColor": "#f0f0f0",
+            "foreColor": "#333",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold",
+            "fontSize": "12px",
+            "fontFamily": "Arial"
+          }
+        },
+        "2": {
+          "value": "Budget",
+          "style": {
+            "backColor": "#f0f0f0",
+            "foreColor": "#333",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold",
+            "fontSize": "12px",
+            "fontFamily": "Arial"
+          }
+        },
+        "3": {
+          "value": "Variance",
+          "style": {
+            "backColor": "#f0f0f0",
+            "foreColor": "#333",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold",
+            "fontSize": "12px",
+            "fontFamily": "Arial"
+          }
+        }
+      },
+      "1": {
+        "0": {
+          "value": "Operating"
+        },
+        "1": {
+          "value": 800000
+        },
+        "2": {
+          "value": 750000
+        },
+        "3": {
+          "value": -50000,
+          "formula": {
+            "si": 0
+          }
+        }
+      },
+      "2": {
+        "0": {
+          "value": "Marketing"
+        },
+        "1": {
+          "value": 150000
+        },
+        "2": {
+          "value": 200000
+        },
+        "3": {
+          "value": 50000,
+          "formula": {
+            "si": 0
+          }
+        }
+      },
+      "3": {
+        "0": {
+          "value": "R&D"
+        },
+        "1": {
+          "value": 300000
+        },
+        "2": {
+          "value": 250000
+        },
+        "3": {
+          "value": -50000,
+          "formula": {
+            "si": 0
+          }
+        }
+      },
+      "4": {
+        "0": {
+          "value": "Admin"
+        },
+        "1": {
+          "value": 100000
+        },
+        "2": {
+          "value": 120000
+        },
+        "3": {
+          "value": 20000,
+          "formula": {
+            "si": 0
+          }
+        }
+      },
+      "5": {
+        "0": {
+          "value": "Total",
+          "style": {
+            "backColor": "#e6f3ff",
+            "foreColor": "#0066cc",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold"
+          }
+        },
+        "1": {
+          "value": 1350000,
+          "style": {
+            "backColor": "#e6f3ff",
+            "foreColor": "#0066cc",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold"
+          },
+          "formula": {
+            "si": 1
+          }
+        },
+        "2": {
+          "value": 1320000,
+          "style": {
+            "backColor": "#e6f3ff",
+            "foreColor": "#0066cc",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold"
+          },
+          "formula": {
+            "si": 2
+          }
+        },
+        "3": {
+          "value": -30000,
+          "style": {
+            "backColor": "#e6f3ff",
+            "foreColor": "#0066cc",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold"
+          },
+          "formula": {
+            "si": 3
+          }
+        }
+      }
+    },
+    "defaultDataNode": {
+      "style": {
+        "themeFont": "Body"
+      }
+    }
+  },
+  "rowHeaderData": {
+    "defaultDataNode": {
+      "style": {
+        "themeFont": "Body"
+      }
+    }
+  },
+  "colHeaderData": {
+    "defaultDataNode": {
+      "style": {
+        "themeFont": "Body"
+      }
+    }
+  },
+  "columns": [
+    {
+      "size": 87
+    },
+    {
+      "size": 54
+    },
+    {
+      "size": 59
+    },
+    {
+      "size": 79
+    }
+  ],
+  "defaultData": {},
+  "leftCellIndex": 0,
+  "topCellIndex": 0,
+  "selections": {
+    "0": {
+      "row": 6,
+      "col": 7,
+      "rowCount": 1,
+      "colCount": 1
+    },
+    "length": 1
+  },
+  "rowOutlines": {
+    "items": []
+  },
+  "columnOutlines": {
+    "items": []
+  },
+  "cellStates": {},
+  "states": {},
+  "outlineColumnOptions": {},
+  "autoMergeRangeInfos": [],
+  "sharedFormulas": {
+    "0": {
+      "formula": "B2-C2",
+      "baseRow": 1,
+      "baseColumn": 3,
+      "lastRow": 4,
+      "lastColumn": 3
+    },
+    "1": {
+      "formula": "SUM(B2:B5)",
+      "baseRow": 5,
+      "baseColumn": 1,
+      "lastRow": 5,
+      "lastColumn": 1
+    },
+    "2": {
+      "formula": "SUM(C2:C5)",
+      "baseRow": 5,
+      "baseColumn": 2,
+      "lastRow": 5,
+      "lastColumn": 2
+    },
+    "3": {
+      "formula": "B6-C6",
+      "baseRow": 5,
+      "baseColumn": 3,
+      "lastRow": 5,
+      "lastColumn": 3
+    },
+    "nextIndex": 4
+  },
+  "printInfo": {
+    "paperSize": {
+      "width": 850,
+      "height": 1100,
+      "kind": 1
+    }
+  }
+}

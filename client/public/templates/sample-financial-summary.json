@@ -1,0 +1,184 @@
+{
+  "name": "Financial Summary",
+  "isSelected": false,
+  "activeRow": 6,
+  "activeCol": 7,
+  "visible": 1,
+  "theme": "Office",
+  "data": {
+    "dataTable": {
+      "0": {
+        "0": {
+          "value": "Metric",
+          "style": {
+            "backColor": "#f0f0f0",
+            "foreColor": "#333",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold",
+            "fontSize": "12px",
+            "fontFamily": "Arial"
+          }
+        },
+        "1": {
+          "value": "Value",
+          "style": {
+            "backColor": "#f0f0f0",
+            "foreColor": "#333",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold",
+            "fontSize": "12px",
+            "fontFamily": "Arial"
+          }
+        },
+        "2": {
+          "value": "Target",
+          "style": {
+            "backColor": "#f0f0f0",
+            "foreColor": "#333",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold",
+            "fontSize": "12px",
+            "fontFamily": "Arial"
+          }
+        },
+        "3": {
+          "value": "Status",
+          "style": {
+            "backColor": "#f0f0f0",
+            "foreColor": "#333",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold",
+            "fontSize": "12px",
+            "fontFamily": "Arial"
+          }
+        }
+      },
+      "1": {
+        "0": {
+          "value": "Revenue Growth"
+        },
+        "1": {
+          "value": 15,
+          "formula": "('Profit Loss Table'!E2-'Profit Loss Table'!B2)/'Profit Loss Table'!B2*100"
+        },
+        "2": {
+          "value": 20
+        },
+        "3": {
+          "value": "Below Target",
+          "formula": "IF(B2>=C2,\"On Target\",\"Below Target\")"
+        }
+      },
+      "2": {
+        "0": {
+          "value": "Profit Margin"
+        },
+        "1": {
+          "value": 15.3,
+          "formula": "'Profit Loss Table'!F6/'Profit Loss Table'!F2*100"
+        },
+        "2": {
+          "value": 18
+        },
+        "3": {
+          "value": "Below Target",
+          "formula": "IF(B3>=C3,\"On Target\",\"Below Target\")"
+        }
+      },
+      "3": {
+        "0": {
+          "value": "ROI"
+        },
+        "1": {
+          "value": 12,
+          "formula": "'Profit Loss Table'!F6/'Capex'!B6*100"
+        },
+        "2": {
+          "value": 15
+        },
+        "3": {
+          "value": "Below Target",
+          "formula": "IF(B4>=C4,\"On Target\",\"Below Target\")"
+        }
+      },
+      "4": {
+        "0": {
+          "value": "Cash Flow"
+        },
+        "1": {
+          "value": 500000,
+          "formula": "'Profit Loss Table'!F6 + SUM('Capex'!D2:D5)"
+        },
+        "2": {
+          "value": 600000
+        },
+        "3": {
+          "value": "Below Target",
+          "formula": "IF(B5>=C5,\"On Target\",\"Below Target\")"
+        }
+      }
+    },
+    "defaultDataNode": {
+      "style": {
+        "themeFont": "Body"
+      }
+    }
+  },
+  "rowHeaderData": {
+    "defaultDataNode": {
+      "style": {
+        "themeFont": "Body"
+      }
+    }
+  },
+  "colHeaderData": {
+    "defaultDataNode": {
+      "style": {
+        "themeFont": "Body"
+      }
+    }
+  },
+  "columns": [
+    {
+      "size": 87
+    },
+    {
+      "size": 54
+    },
+    {
+      "size": 59
+    },
+    {
+      "size": 79
+    }
+  ],
+  "defaultData": {},
+  "leftCellIndex": 0,
+  "topCellIndex": 0,
+  "selections": {
+    "0": {
+      "row": 6,
+      "col": 7,
+      "rowCount": 1,
+      "colCount": 1
+    },
+    "length": 1
+  },
+  "rowOutlines": {
+    "items": []
+  },
+  "columnOutlines": {
+    "items": []
+  },
+  "cellStates": {},
+  "states": {},
+  "outlineColumnOptions": {},
+  "autoMergeRangeInfos": [],
+  "printInfo": {
+    "paperSize": {
+      "width": 850,
+      "height": 1100,
+      "kind": 1
+    }
+  }
+}

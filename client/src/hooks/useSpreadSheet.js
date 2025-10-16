@@ -577,6 +577,177 @@ export const useSpreadSheet = () => {
         }
     };
 
+    const addRows = (row, count, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            sheet.addRows(row, count);
+        }
+    };
+
+    const addColumns = (col, count, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            sheet.addColumns(col, count);
+        }
+    };
+
+    const autoFitRow = (row, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            sheet.autoFitRow(row);
+        }
+    };
+
+    const autoFitColumn = (col, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            sheet.autoFitColumn(col);
+        }
+    };
+
+    const deleteRows = (row, count, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            sheet.deleteRows(row, count);
+        }
+    };
+
+    const deleteColumns = (col, count, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            sheet.deleteColumns(col, count);
+        }
+    };
+
+    const setRowHeight = (row, height, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            sheet.setRowHeight(row, height);
+        }
+    };
+
+    const setColumnWidth = (col, width, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            sheet.setColumnWidth(col, width);
+        }
+    };
+
+    const copyTo = (fromRow, fromColumn, toRow, toColumn, rowCount, columnCount, option, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            sheet.copyTo(fromRow, fromColumn, toRow, toColumn, rowCount, columnCount, option);
+        }
+    };
+
+    const getFormatter = (row, col, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            return sheet.getFormatter(row, col);
+        }
+        return null;
+    };
+
+    const setFormatter = (row, col, format, sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            sheet.setFormatter(row, col, format);
+        }
+    };
+
+
+
+
+
+
+
+
+    const setActiveSheet = (sheet) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            spread.setActiveSheet(sheet);
+        }
+    };
+
+    const setActiveSheetIndex = (index) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            spread.setActiveSheetIndex(index);
+        }
+    };
+
+    const removeSheet = (sheet) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            spread.removeSheet(sheet);
+        }
+    };
+
+    const setSheetCount = (count) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            spread.setSheetCount(count);
+        }
+    };
+
+    const getSheetCount = () => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            return spread.getSheetCount();
+        }
+        return 0;
+    };
+
+    const getSheetFromName = (name) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            return spread.getSheetFromName(name);
+        }
+        return null;
+    };
+
+    const getSheetIndex = (sheet) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            return spread.getSheetIndex(sheet);
+        }
+        return -1;
+    };
+
+    const getActiveSheet = () => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            return spread.getActiveSheet();
+        }
+        return null;
+    };
+
+    const getActiveSheetIndex = () => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            return spread.getActiveSheetIndex();
+        }
+        return -1;
+    };
+
+    const clearSheets = () => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            spread.clearSheets();
+        }
+    };
+
+    const addSheet = (sheetName, atIndex) => {
+        if (designerRef.current) {
+            const spread = designerRef.current.getWorkbook();
+            const index = atIndex || spread.getSheetCount();
+            spread.addSheet(index, new window.GC.Spread.Sheets.Worksheet(sheetName));
+            const sheet = spread.getSheet(index);
+            return sheet;
+        }
+        return null;
+    };
+
 
 
 
@@ -593,6 +764,7 @@ export const useSpreadSheet = () => {
         debugInfo, 
         onEventCallbackRef,
         designerRef,
+
         getSheetNames,
         getSheetJSON,
         setSheetJSON,
@@ -609,5 +781,30 @@ export const useSpreadSheet = () => {
         getCharts,
         setCharts,
         resetMergingStatus,
+
+        addRows,
+        addColumns,
+        autoFitRow,
+        autoFitColumn,
+        deleteRows,
+        deleteColumns,
+        setRowHeight,
+        setColumnWidth,
+        copyTo,
+        getFormatter,
+        setFormatter,
+
+        setActiveSheet,
+        setActiveSheetIndex,
+        removeSheet,
+        setSheetCount,
+        getSheet,
+        getSheetCount,
+        getSheetFromName,
+        getSheetIndex,
+        getActiveSheet,
+        getActiveSheetIndex,
+        clearSheets,
+        addSheet,
     };
 };

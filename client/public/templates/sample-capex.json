@@ -1,0 +1,240 @@
+{
+  "name": "Capex",
+  "isSelected": false,
+  "activeRow": 6,
+  "activeCol": 7,
+  "visible": 1,
+  "theme": "Office",
+  "data": {
+    "dataTable": {
+      "0": {
+        "0": {
+          "value": "Asset",
+          "style": {
+            "backColor": "#f0f0f0",
+            "foreColor": "#333",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold",
+            "fontSize": "12px",
+            "fontFamily": "Arial"
+          }
+        },
+        "1": {
+          "value": "Cost",
+          "style": {
+            "backColor": "#f0f0f0",
+            "foreColor": "#333",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold",
+            "fontSize": "12px",
+            "fontFamily": "Arial"
+          }
+        },
+        "2": {
+          "value": "Useful Life",
+          "style": {
+            "backColor": "#f0f0f0",
+            "foreColor": "#333",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold",
+            "fontSize": "12px",
+            "fontFamily": "Arial"
+          }
+        },
+        "3": {
+          "value": "Depreciation",
+          "style": {
+            "backColor": "#f0f0f0",
+            "foreColor": "#333",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold",
+            "fontSize": "12px",
+            "fontFamily": "Arial"
+          }
+        }
+      },
+      "1": {
+        "0": {
+          "value": "Equipment"
+        },
+        "1": {
+          "value": 500000
+        },
+        "2": {
+          "value": 5
+        },
+        "3": {
+          "value": 100000,
+          "formula": {
+            "si": 0
+          }
+        }
+      },
+      "2": {
+        "0": {
+          "value": "Software"
+        },
+        "1": {
+          "value": 200000
+        },
+        "2": {
+          "value": 3
+        },
+        "3": {
+          "value": 66667,
+          "formula": {
+            "si": 0
+          }
+        }
+      },
+      "3": {
+        "0": {
+          "value": "Buildings"
+        },
+        "1": {
+          "value": 1000000
+        },
+        "2": {
+          "value": 20
+        },
+        "3": {
+          "value": 50000,
+          "formula": {
+            "si": 0
+          }
+        }
+      },
+      "4": {
+        "0": {
+          "value": "Vehicles"
+        },
+        "1": {
+          "value": 150000
+        },
+        "2": {
+          "value": 7
+        },
+        "3": {
+          "value": 21429,
+          "formula": {
+            "si": 0
+          }
+        }
+      },
+      "5": {
+        "0": {
+          "value": "Total",
+          "style": {
+            "backColor": "#e6f3ff",
+            "foreColor": "#0066cc",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold"
+          }
+        },
+        "1": {
+          "value": 1850000,
+          "style": {
+            "backColor": "#e6f3ff",
+            "foreColor": "#0066cc",
+            "font": "bold 12px Arial",
+            "fontWeight": "bold"
+          },
+          "formula": {
+            "si": 1
+          }
+        },
+        "2": {
+          "value": "",
+          "style": {
+            "backColor": "#e6f3ff"
+          }
+        },
+        "3": {
+          "value": "",
+          "style": {
+            "backColor": "#e6f3ff"
+          }
+        }
+      }
+    },
+    "defaultDataNode": {
+      "style": {
+        "themeFont": "Body"
+      }
+    }
+  },
+  "rowHeaderData": {
+    "defaultDataNode": {
+      "style": {
+        "themeFont": "Body"
+      }
+    }
+  },
+  "colHeaderData": {
+    "defaultDataNode": {
+      "style": {
+        "themeFont": "Body"
+      }
+    }
+  },
+  "columns": [
+    {
+      "size": 87
+    },
+    {
+      "size": 54
+    },
+    {
+      "size": 59
+    },
+    {
+      "size": 79
+    }
+  ],
+  "defaultData": {},
+  "leftCellIndex": 0,
+  "topCellIndex": 0,
+  "selections": {
+    "0": {
+      "row": 6,
+      "col": 7,
+      "rowCount": 1,
+      "colCount": 1
+    },
+    "length": 1
+  },
+  "rowOutlines": {
+    "items": []
+  },
+  "columnOutlines": {
+    "items": []
+  },
+  "cellStates": {},
+  "states": {},
+  "outlineColumnOptions": {},
+  "autoMergeRangeInfos": [],
+  "sharedFormulas": {
+    "0": {
+      "formula": "B2/C2",
+      "baseRow": 1,
+      "baseColumn": 3,
+      "lastRow": 4,
+      "lastColumn": 3
+    },
+    "1": {
+      "formula": "SUM(B2:B5)",
+      "baseRow": 5,
+      "baseColumn": 1,
+      "lastRow": 5,
+      "lastColumn": 1
+    },
+    "nextIndex": 2
+  },
+  "printInfo": {
+    "paperSize": {
+      "width": 850,
+      "height": 1100,
+      "kind": 1
+    }
+  }
+}

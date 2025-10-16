@@ -4,7 +4,7 @@ import SpreadSheetEditor from '../components/SpreadSheetEditor';
 import { Button } from '../components/ui/button';
 import { useEffect, useRef } from 'react';
 
-const SpreadSheetEditorPageTemplateCreation = () => {
+const SpreadSheetEditorPageJSONTemplateCreation = () => {
   const { containerRef, loading, debugInfo, onEventCallbackRef, designerRef,
     getSheetNames,
     getSheetJSON,
@@ -62,116 +62,37 @@ const SpreadSheetEditorPageTemplateCreation = () => {
     );
   }
 
-  const generateFinancialSheets = () => {
-    const sheetConfigs = [
-      {
-        name: 'Revenue Channel',
-        headers: ['Channel', 'Revenue', 'Growth %', 'Market Share'],
-        data: [
-          ['Online Sales', 500000, 15, 25],
-          ['Retail Stores', 300000, 8, 20],
-          ['Wholesale', 200000, 12, 15],
-          ['Direct Sales', 150000, 20, 10],
-        ]
-      },
-      {
-        name: 'HR',
-        headers: ['Department', 'Employees', 'Salary Budget', 'Turnover Rate'],
-        data: [
-          ['Engineering', 50, 2500000, 5],
-          ['Sales', 30, 1500000, 8],
-          ['Marketing', 20, 1000000, 6],
-          ['Finance', 15, 750000, 3],
-        ]
-      },
-      {
-        name: 'Capex',
-        headers: ['Asset', 'Cost', 'Useful Life', 'Depreciation'],
-        data: [
-          ['Equipment', 500000, 5, 100000],
-          ['Software', 200000, 3, 66667],
-          ['Buildings', 1000000, 20, 50000],
-          ['Vehicles', 150000, 7, 21429],
-        ]
-      },
-      {
-        name: 'Expenses',
-        headers: ['Category', 'Amount', 'Budget', 'Variance'],
-        data: [
-          ['Operating', 800000, 750000, -50000],
-          ['Marketing', 150000, 200000, 50000],
-          ['R&D', 300000, 250000, -50000],
-          ['Admin', 100000, 120000, 20000],
-        ]
-      },
-      {
-        name: 'Profit Loss Table',
-        headers: ['Item', 'Q1', 'Q2', 'Q3', 'Q4', 'Total'],
-        data: [
-          ['Revenue', 400000, 450000, 500000, 550000, 1900000],
-          ['COGS', 200000, 225000, 250000, 275000, 950000],
-          ['Gross Profit', 200000, 225000, 250000, 275000, 950000],
-          ['Expenses', 150000, 160000, 170000, 180000, 660000],
-          ['Net Profit', 50000, 65000, 80000, 95000, 290000],
-        ]
-      },
-      {
-        name: 'Budget Plan',
-        headers: ['Category', 'Planned', 'Actual', 'Variance %'],
-        data: [
-          ['Revenue', 2000000, 1900000, -5],
-          ['Expenses', 700000, 660000, 5.7],
-          ['Capex', 2000000, 1850000, 7.5],
-          ['HR Costs', 5000000, 4750000, 5],
-        ]
-      },
-      {
-        name: 'Financial Summary',
-        headers: ['Metric', 'Value', 'Target', 'Status'],
-        data: [
-          ['Revenue Growth', 15, 20, 'Below Target'],
-          ['Profit Margin', 15.3, 18, 'Below Target'],
-          ['ROI', 12, 15, 'Below Target'],
-          ['Cash Flow', 500000, 600000, 'Below Target'],
-        ]
-      },
-      {
-        name: 'Assumptions',
-        headers: ['Assumption', 'Value', 'Source', 'Confidence'],
-        data: [
-          ['Inflation Rate', 3, 'Government Data', 'High'],
-          ['Market Growth', 8, 'Industry Report', 'Medium'],
-          ['Currency Exchange', 1.1, 'Bank Forecast', 'Medium'],
-          ['Interest Rate', 4.5, 'Central Bank', 'High'],
-        ]
-      },
+  const generateFinancialSheets = async () => {
+    const templateFiles = [
+      'sample-revenue-channel.json',
+      'sample-hr.json',
+      'sample-capex.json',
+      'sample-expenses.json',
+      'sample-profit-loss.json',
+      'sample-budget-plan.json',
+      'sample-financial-summary.json',
+      'sample-assumptions.json'
     ];
 
-    sheetConfigs.forEach((config, index) => {
-      const sheet = addSheet(config.name);
-      if (sheet) {
-        // Set headers
-        sheet.setArray(0, 0, [config.headers]);
-        
-        // Set data
-        sheet.setArray(1, 0, config.data);
-        
-        // Style headers
-        const headerStyle = new window.GC.Spread.Sheets.Style();
-        headerStyle.backColor = '#f0f0f0';
-        headerStyle.font = 'bold 12px Arial';
-        headerStyle.foreColor = '#333';
-        
-        for (let col = 0; col < config.headers.length; col++) {
-          sheet.setStyle(0, col, headerStyle);
+    for (const templateFile of templateFiles) {
+      try {
+        // Load the JSON template
+        const response = await fetch(`/templates/${templateFile}`);
+        if (!response.ok) {
+          console.error(`Failed to load template ${templateFile}:`, response.statusText);
+          continue;
         }
+        const templateData = await response.json();
         
-        // Auto-fit columns
-        for (let col = 0; col < config.headers.length; col++) {
-          sheet.autoFitColumn(col);
+        // Create a new sheet and apply the JSON template
+        const sheet = addSheet(templateData.name);
+        if (sheet) {
+          sheet.fromJSON(templateData);
         }
+      } catch (error) {
+        console.error(`Error loading template ${templateFile}:`, error);
       }
-    });
+    }
     
     // Set the first sheet as active
     setActiveSheetIndex(0);
@@ -283,4 +204,4 @@ const SpreadSheetEditorPageTemplateCreation = () => {
 
 };
 
-export default SpreadSheetEditorPageTemplateCreation;
+export default SpreadSheetEditorPageJSONTemplateCreation;

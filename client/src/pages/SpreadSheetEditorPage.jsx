@@ -21,7 +21,32 @@ const SpreadSheetEditorPage = () => {
     getCharts,
     setCharts,
     resetMergingStatus,
-   } = useSpreadSheet();
+
+    addRows,
+    addColumns,
+    autoFitRow,
+    autoFitColumn,
+    deleteRows,
+    deleteColumns,
+    setRowHeight,
+    setColumnWidth,
+    copyTo,
+    getFormatter,
+    setFormatter,
+  
+    setActiveSheet,
+    setActiveSheetIndex,
+    removeSheet,
+    setSheetCount,
+    getSheet,
+    getSheetCount,
+    getSheetFromName,
+    getSheetIndex,
+    getActiveSheet,
+    getActiveSheetIndex,
+    clearSheets,
+    addSheet,
+  } = useSpreadSheet();
 
 
 
