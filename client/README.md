@@ -77,6 +77,16 @@ Budget Plan → Financial Summary (Variance Analysis)
    http://localhost:5173
    ```
 
+### Environment Variables
+
+The application uses the following environment variables (configured in `.env`):
+
+- `VITE_WEBSOCKET_URL` - WebSocket server URL for remote control (default: `ws://localhost:8080`)
+- `VITE_NODE_ENV` - Environment mode (development/production)
+- `VITE_API_BASE_URL` - API base URL for future backend integration
+
+Copy `.env.example` to `.env` and modify as needed.
+
 ### Build for Production
 
 ```bash

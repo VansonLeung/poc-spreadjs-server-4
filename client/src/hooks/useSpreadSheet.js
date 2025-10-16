@@ -310,7 +310,7 @@ export const useSpreadSheet = () => {
                 designerRef.current = null;
             }
         };
-    }, []); // No
+    }, []);
 
     
     const getSheet = (sheetName) => {
@@ -328,8 +328,15 @@ export const useSpreadSheet = () => {
 
     const getSheetNames = () => {
         if (designerRef.current) {
+            const sheetNames = [];
             const spread = designerRef.current.getWorkbook();
-            return spread.getSheetNames();
+            for (var i = 0; i < spread.getSheetCount(); i++) {
+                const sheet = spread.getSheet(i);
+                if (sheet) {
+                    sheetNames.push(sheet.name());
+                }
+            }
+            return sheetNames;
         }
         return [];
     }
@@ -349,21 +356,37 @@ export const useSpreadSheet = () => {
         }
     }
 
-    const getSheetCSV = (sheetName) => {
+    const getSheetCSV = (newLine = "\r", delimiter = ",", sheetName) => {
         const sheet = getSheet(sheetName);
         if (sheet) {
-            return sheet.toCSV();
+            return getSheetCSVOfRange(0, 0, sheet.getRowCount(), sheet.getColumnCount(), newLine, delimiter, sheetName);
         }
         return '';
     }
 
-    const setSheetCSV = (csv, sheetName) => {
+    const setSheetCSV = (csv, newLine = "\r", delimiter = ",", sheetName) => {
         const sheet = getSheet(sheetName);
         if (sheet && csv) {
-            sheet.fromCSV(csv);
+            setSheetCSVOfRange(0, 0, csv, newLine, delimiter, sheetName);
         }
     }
 
+    const getSheetCSVOfRange = (startRow = 0, startCol = 0, rowCount = 0, colCount = 0, newLine = "\r", delimiter = ",", sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet) {
+            const _rowCount = rowCount > 0 ? rowCount : sheet.getRowCount() - startRow;
+            const _colCount = colCount > 0 ? colCount : sheet.getColumnCount() - startCol;
+            return sheet.getCsv(startRow, startCol, _rowCount, _colCount, newLine, delimiter);
+        }
+        return '';
+    }
+
+    const setSheetCSVOfRange = (startRow = 0, startCol = 0, csv, newLine = "\r", delimiter = ",", sheetName) => {
+        const sheet = getSheet(sheetName);
+        if (sheet && csv) {
+            sheet.setCSV(startRow, startCol, csv, newLine, delimiter, window.GC.Spread.Sheets.TextFileOpenFlags.None);
+        }
+    }
 
 
     const getProcessedDataOfWholeSheet = (sheetName) => {
@@ -407,6 +430,7 @@ export const useSpreadSheet = () => {
     const setProcessedData = (startRow, startCol, values, sheetName) => {
         const sheet = getSheet(sheetName);
         if (sheet) {
+            debugger
             sheet.setArray(startRow, startCol, values);
         }
     };
@@ -770,6 +794,8 @@ export const useSpreadSheet = () => {
         setSheetJSON,
         getSheetCSV,
         setSheetCSV,
+        getSheetCSVOfRange,
+        setSheetCSVOfRange,
         getProcessedDataOfWholeSheet,
         getRawDataOfWholeSheet,
         getProcessedData,

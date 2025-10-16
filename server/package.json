@@ -1,0 +1,20 @@
+{
+  "name": "spreadsheet-websocket-server",
+  "version": "1.0.0",
+  "description": "WebSocket server for remote spreadsheet control",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.1",
+    "dotenv": "^16.3.1",
+    "fastify": "^4.26.2",
+    "fastify-plugin": "^4.5.1",
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

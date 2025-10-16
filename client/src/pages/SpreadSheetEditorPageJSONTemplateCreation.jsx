@@ -2,15 +2,23 @@ import { FileSpreadsheet, Loader2 } from 'lucide-react';
 import { useSpreadSheet } from '../hooks/useSpreadSheet';
 import SpreadSheetEditor from '../components/SpreadSheetEditor';
 import { Button } from '../components/ui/button';
+import WebSocketDebugOverlay from '../components/WebSocketDebugOverlay';
+import { useWebSocket } from '@/hooks/useWebSocket';
+import { useSpreadsheetCommands } from '@/hooks/useSpreadsheetCommands';
 import { useEffect, useRef } from 'react';
 
 const SpreadSheetEditorPageJSONTemplateCreation = () => {
+  // Enable WebSocket support - you can configure the URL here
+  const webSocketUrl = import.meta.env.VITE_WEBSOCKET_URL || 'ws://localhost:8080';
+
   const { containerRef, loading, debugInfo, onEventCallbackRef, designerRef,
     getSheetNames,
     getSheetJSON,
     setSheetJSON,
     getSheetCSV,
     setSheetCSV,
+    getSheetCSVOfRange,
+    setSheetCSVOfRange,
     getProcessedDataOfWholeSheet,
     getRawDataOfWholeSheet,
     getProcessedData,
@@ -49,18 +57,89 @@ const SpreadSheetEditorPageJSONTemplateCreation = () => {
     addSheet,
   } = useSpreadSheet();
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="text-center">
-          <FileSpreadsheet className="w-24 h-24 mx-auto text-indigo-600 mb-4" />
-          <Loader2 className="w-8 h-8 mx-auto mb-4 text-indigo-600 animate-spin" />
-          <h1 className="text-2xl font-bold text-gray-800">Finance Spreadsheet Platform</h1>
-          <p className="text-gray-600 mt-2">Loading spreadsheet editor...</p>
-        </div>
-      </div>
-    );
-  }
+  const {
+    executeCommand,
+    getAvailableCommands,
+    commandMap
+  } = useSpreadsheetCommands({
+    getSheetNames,
+    getSheetJSON,
+    setSheetJSON,
+    getSheetCSV,
+    setSheetCSV,
+    getSheetCSVOfRange,
+    setSheetCSVOfRange,
+    getProcessedDataOfWholeSheet,
+    getRawDataOfWholeSheet,
+    getProcessedData,
+    getRawData,
+    setProcessedData,
+    setRawData,
+    getStylesAndMerges,
+    setStylesAndMerges,
+    getCharts,
+    setCharts,
+    resetMergingStatus,
+
+    addRows,
+    addColumns,
+    autoFitRow,
+    autoFitColumn,
+    deleteRows,
+    deleteColumns,
+    setRowHeight,
+    setColumnWidth,
+    copyTo,
+    getFormatter,
+    setFormatter,
+  
+    setActiveSheet,
+    setActiveSheetIndex,
+    removeSheet,
+    setSheetCount,
+    getSheet,
+    getSheetCount,
+    getSheetFromName,
+    getSheetIndex,
+    getActiveSheet,
+    getActiveSheetIndex,
+    clearSheets,
+    addSheet,
+  });
+
+  const {
+    isConnected: webSocketConnected,
+    sendMessage: sendWebSocketMessage,
+    error: webSocketError,
+    connect: connectWebSocket,
+    disconnect: disconnectWebSocket,
+    onRecvMessageRef,
+  } = useWebSocket(webSocketUrl, (message) => {
+    if (message.type === 'command' && message.command) {
+      const result = executeCommand(message.command, message.params);
+      const resp = {...result, type: 'command_ack', requestId: message.requestId};
+      onRecvMessageDebugRef.current && onRecvMessageDebugRef.current("Execute Command result", JSON.stringify(resp, null, 2), 'out');
+      sendWebSocketMessage(resp);
+    }
+  }, true);
+
+
+  const onRecvMessageDebugRef = useRef(null);
+
+
+  useEffect(() => {
+    // Automatically connect to WebSocket on mount
+    connectWebSocket();
+    
+    onRecvMessageRef.current = (type, content, direction) => {
+      onRecvMessageDebugRef.current && onRecvMessageDebugRef.current(type, content, direction);
+    };
+
+    return () => {
+      // Disconnect from WebSocket on unmount
+      disconnectWebSocket();
+    };
+  }, []);
 
   const generateFinancialSheets = async () => {
     const templateFiles = [
@@ -165,6 +244,23 @@ const SpreadSheetEditorPageJSONTemplateCreation = () => {
     }
   };
 
+
+
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-center">
+          <FileSpreadsheet className="w-24 h-24 mx-auto text-indigo-600 mb-4" />
+          <Loader2 className="w-8 h-8 mx-auto mb-4 text-indigo-600 animate-spin" />
+          <h1 className="text-2xl font-bold text-gray-800">Finance Spreadsheet Platform</h1>
+          <p className="text-gray-600 mt-2">Loading spreadsheet editor...</p>
+        </div>
+      </div>
+    );
+  }
+
+  
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
       <div style={{ flex: 1, borderRight: '1px solid #ccc' }}>
@@ -199,6 +295,12 @@ const SpreadSheetEditorPageJSONTemplateCreation = () => {
           Copy Sheet Info
         </Button>
       </div>
+
+      <WebSocketDebugOverlay
+        webSocketConnected={webSocketConnected}
+        onSendCommand={sendWebSocketMessage}
+        onRecvCommand={onRecvMessageDebugRef}
+      />
     </div>
   )
 

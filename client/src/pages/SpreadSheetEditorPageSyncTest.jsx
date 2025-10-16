@@ -1,10 +1,14 @@
 import { FileSpreadsheet, Loader2 } from 'lucide-react';
 import { useSpreadSheet } from '../hooks/useSpreadSheet';
 import SpreadSheetEditor from '../components/SpreadSheetEditor';
+import WebSocketDebugOverlay from '../components/WebSocketDebugOverlay';
 import { useEffect, useRef } from 'react';
 
 const SpreadSheetEditorPageSyncTest = () => {
+  // Enable WebSocket support - you can configure the URL here
+  const webSocketUrl = import.meta.env.VITE_WEBSOCKET_URL || 'ws://localhost:8080';
   const { containerRef, loading, debugInfo, onEventCallbackRef, designerRef,
+    webSocketEnabled, webSocketConnected, sendWebSocketMessage,
     getProcessedData: getProcessedData1,
     getRawData: getRawData1,
     setProcessedData: setProcessedData1,
@@ -14,8 +18,9 @@ const SpreadSheetEditorPageSyncTest = () => {
     getCharts: getCharts1,
     setCharts: setCharts1,
     resetMergingStatus: resetMergingStatus1,
-   } = useSpreadSheet();
+   } = useSpreadSheet(true, webSocketUrl);
   const { containerRef: containerRef2, loading: loading2, debugInfo: debugInfo2, onEventCallbackRef: onEventCallbackRef2, designerRef: designerRef2,
+    webSocketEnabled: webSocketEnabled2, webSocketConnected: webSocketConnected2, sendWebSocketMessage: sendWebSocketMessage2,
     getProcessedData: getProcessedData2,
     getRawData: getRawData2,
     setProcessedData: setProcessedData2,
@@ -25,7 +30,7 @@ const SpreadSheetEditorPageSyncTest = () => {
     getCharts: getCharts2,
     setCharts: setCharts2,
     resetMergingStatus: resetMergingStatus2,
-   } = useSpreadSheet();
+   } = useSpreadSheet(false, webSocketUrl);
    
   const syncCellRange = (sourceRange, targetRange, {
     isValue = true,
@@ -148,6 +153,14 @@ const SpreadSheetEditorPageSyncTest = () => {
           <Loader2 className="w-8 h-8 mx-auto mb-4 text-indigo-600 animate-spin" />
           <h1 className="text-2xl font-bold text-gray-800">Finance Spreadsheet Platform</h1>
           <p className="text-gray-600 mt-2">Loading spreadsheet editor...</p>
+          {webSocketEnabled && (
+            <div className="mt-4 flex items-center justify-center space-x-2">
+              <div className={`w-3 h-3 rounded-full ${webSocketConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+              <span className="text-sm text-gray-600">
+                WebSocket: {webSocketConnected ? 'Connected' : 'Disconnected'}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -161,6 +174,22 @@ const SpreadSheetEditorPageSyncTest = () => {
       <div style={{ flex: 1, borderRight: '1px solid #ccc' }}>
         {loading2 ? null : <SpreadSheetEditor containerRef={containerRef2} debugInfo={debugInfo2} /> }
       </div>
+      {webSocketEnabled && (
+        <div className="absolute top-4 right-4 bg-white border border-gray-300 rounded-lg p-2 shadow-lg">
+          <div className="flex items-center space-x-2 mb-2">
+            <div className={`w-3 h-3 rounded-full ${webSocketConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+            <span className="text-sm font-medium">
+              Editor 1: {webSocketConnected ? 'Connected' : 'Disconnected'}
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className={`w-3 h-3 rounded-full ${webSocketConnected2 ? 'bg-green-500' : 'bg-red-500'}`}></div>
+            <span className="text-sm font-medium">
+              Editor 2: {webSocketConnected2 ? 'Connected' : 'Disconnected'}
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   )
 

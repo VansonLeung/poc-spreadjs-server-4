@@ -17,6 +17,8 @@ This project demonstrates a sophisticated financial spreadsheet application that
 ### **Technology Stack**
 - **Frontend**: React 19 with Vite build system
 - **Spreadsheet Engine**: SpreadJS (GrapeCity) - Enterprise-grade spreadsheet component
+- **Real-Time Communication**: WebSocket server for remote control
+- **MCP Integration**: Model Context Protocol REST API for LLM interaction
 - **Styling**: Tailwind CSS with custom UI components
 - **State Management**: React hooks with custom spreadsheet management
 - **Build Tools**: Vite, ESLint, PostCSS, Autoprefixer
@@ -41,13 +43,21 @@ poc-spreadjs-server-4/
 │   │   │   ├── SpreadSheetEditor.jsx
 │   │   │   └── ui/                 # Reusable UI components
 │   │   ├── hooks/
-│   │   │   └── useSpreadSheet.js   # Custom spreadsheet management hook
+│   │   │   ├── useSpreadSheet.js   # Custom spreadsheet management hook
+│   │   │   ├── useWebSocket.js     # WebSocket connection management
+│   │   │   └── useSpreadsheetCommands.js # Command mapping for remote control
 │   │   ├── lib/
 │   │   │   └── utils.js
 │   │   └── pages/
+│   │       ├── SpreadSheetEditorPage.jsx
+│   │       ├── SpreadSheetEditorPageSyncTest.jsx
 │   │       └── SpreadSheetEditorPageJSONTemplateCreation.jsx
 │   ├── package.json
 │   └── README.md                   # Client-specific documentation
+├── server/                         # WebSocket server for remote control
+│   ├── server.js                   # WebSocket server implementation
+│   ├── package.json
+│   └── README.md                   # Server-specific documentation
 └── README.md                       # Project overview (this file)
 ```
 
@@ -93,12 +103,31 @@ Budget Plan → Financial Summary (Variance Analysis)
    npm install
    ```
 
-3. **Start development server**
+3. **Install server dependencies**
    ```bash
+   cd ../server
+   npm install
+   cd ..
+   ```
+
+4. **Start the WebSocket server** (in a separate terminal)
+   ```bash
+   cd server
+   npm start
+   ```
+
+5. **Start the React development server** (in another terminal)
+   ```bash
+   cd client
    npm run dev
    ```
 
-4. **Open your browser**
+6. **Or start both servers** (alternative to steps 4-5)
+   ```bash
+   ./start-dev.sh
+   ```
+
+7. **Open your browser**
    ```
    http://localhost:5173
    ```
@@ -144,6 +173,19 @@ npm run build
 - **Professional UI**: Clean, spreadsheet-like interface
 - **Template Loading**: One-click loading of pre-configured financial models
 
+### **Remote Control Features**
+- **WebSocket Integration**: Real-time remote control of spreadsheet operations
+- **MCP Endpoints**: Model Context Protocol REST API for LLM integration
+- **Command Broadcasting**: Send commands to multiple connected clients
+- **Connection Status**: Visual indicators for WebSocket connection state
+### **API Commands**: Programmatic control of all spreadsheet functions
+
+### **MCP Integration**
+- **LLM Control**: Model Context Protocol endpoints for AI assistant integration
+- **REST API**: HTTP endpoints for spreadsheet operations
+- **Broadcast System**: Commands sent to all connected WebSocket clients
+- **Message Chain**: `LLM → MCP API → Server → WebSocket → Client`
+
 ## 🎯 Use Cases
 
 ### **Financial Planning**
@@ -163,7 +205,9 @@ npm run build
 
 ## 🛠️ Development
 
-### **Available Scripts**
+## 🛠️ Development
+
+### **Client Scripts**
 ```bash
 cd client
 
@@ -179,6 +223,21 @@ npm run preview
 # Lint code
 npm run lint
 ```
+
+### **Server Scripts**
+```bash
+cd server
+
+# Start WebSocket server
+npm start
+
+# Development mode with auto-restart
+npm run dev
+```
+
+### **Environment Variables**
+- `VITE_WEBSOCKET_URL`: WebSocket server URL (default: `ws://localhost:8080`)
+- `PORT`: WebSocket server port (default: 8080)
 
 ### **Adding New Templates**
 1. Create JSON template in `client/public/templates/`
