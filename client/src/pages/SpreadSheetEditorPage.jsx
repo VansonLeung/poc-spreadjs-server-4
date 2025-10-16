@@ -26,15 +26,7 @@ const SpreadSheetEditorPage = () => {
     setCharts: setCharts2,
     resetMergingStatus: resetMergingStatus2,
    } = useSpreadSheet();
-
-  // Store clipboard data for paste operations (currently not used with simplified approach)
-  const clipboardDataRef = useRef(null);
-  const clipboardDataRef2 = useRef(null);
-  
-  // Store copied data for internal copy/paste operations (currently not used)
-  const copiedDataRef = useRef(null);
-  const copiedDataRef2 = useRef(null);
-
+   
   const syncCellRange = (sourceRange, targetRange, {
     isValue = true,
     isFormula = true,
