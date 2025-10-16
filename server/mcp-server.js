@@ -51,7 +51,7 @@ fastify.post('/mcp/spreadsheet/set-cell', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'setProcessedData',
-    params: [sheetIndex, row, col, [[value]]],
+    params: { sheetIndex, row, col, values: [[value]] },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -61,7 +61,7 @@ fastify.post('/mcp/spreadsheet/set-cell', async (request, reply) => {
   return {
     success: true,
     command: 'setProcessedData',
-    params: [sheetIndex, row, col, [[value]]],
+    params: { sheetIndex, row, col, values: [[value]] },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -80,7 +80,7 @@ fastify.post('/mcp/spreadsheet/set-formula', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'setRawData',
-    params: [sheetIndex, row, col, [[formula]]],
+    params: { sheetIndex, row, col, formulas: [[formula]] },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -90,7 +90,7 @@ fastify.post('/mcp/spreadsheet/set-formula', async (request, reply) => {
   return {
     success: true,
     command: 'setRawData',
-    params: [sheetIndex, row, col, [[formula]]],
+    params: { sheetIndex, row, col, formulas: [[formula]] },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -103,7 +103,7 @@ fastify.post('/mcp/spreadsheet/add-sheet', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'addSheet',
-    params: sheetName ? [sheetName] : [],
+    params: { sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -113,7 +113,7 @@ fastify.post('/mcp/spreadsheet/add-sheet', async (request, reply) => {
   return {
     success: true,
     command: 'addSheet',
-    params: sheetName ? [sheetName] : [],
+    params: { sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -132,7 +132,7 @@ fastify.post('/mcp/spreadsheet/set-active-sheet', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'setActiveSheetIndex',
-    params: [sheetIndex],
+    params: { sheetIndex },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -142,7 +142,7 @@ fastify.post('/mcp/spreadsheet/set-active-sheet', async (request, reply) => {
   return {
     success: true,
     command: 'setActiveSheetIndex',
-    params: [sheetIndex],
+    params: { sheetIndex },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -155,7 +155,7 @@ fastify.post('/mcp/spreadsheet/clear-sheet', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'clearSheets',
-    params: [sheetIndex],
+    params: { sheetIndex },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -165,7 +165,7 @@ fastify.post('/mcp/spreadsheet/clear-sheet', async (request, reply) => {
   return {
     success: true,
     command: 'clearSheets',
-    params: [sheetIndex],
+    params: { sheetIndex },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -184,7 +184,7 @@ fastify.post('/mcp/spreadsheet/set-sheet-json', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'setSheetJSON',
-    params: [sheetIndex, { template: json }],
+    params: { sheetIndex, template: json },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -194,7 +194,7 @@ fastify.post('/mcp/spreadsheet/set-sheet-json', async (request, reply) => {
   return {
     success: true,
     command: 'setSheetJSON',
-    params: [sheetIndex, { template: json }],
+    params: { sheetIndex, template: json },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -213,7 +213,7 @@ fastify.post('/mcp/spreadsheet/remove-sheet', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'removeSheet',
-    params: [sheet],
+    params: { sheet },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -223,7 +223,7 @@ fastify.post('/mcp/spreadsheet/remove-sheet', async (request, reply) => {
   return {
     success: true,
     command: 'removeSheet',
-    params: [sheet],
+    params: { sheet },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -242,7 +242,7 @@ fastify.post('/mcp/spreadsheet/set-active-sheet-index', async (request, reply) =
   const message = {
     type: 'command',
     command: 'setActiveSheetIndex',
-    params: [index],
+    params: { index },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -252,7 +252,7 @@ fastify.post('/mcp/spreadsheet/set-active-sheet-index', async (request, reply) =
   return {
     success: true,
     command: 'setActiveSheetIndex',
-    params: [index],
+    params: { index },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -263,7 +263,7 @@ fastify.post('/mcp/spreadsheet/clear-sheets', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'clearSheets',
-    params: [],
+    params: {},
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -273,7 +273,7 @@ fastify.post('/mcp/spreadsheet/clear-sheets', async (request, reply) => {
   return {
     success: true,
     command: 'clearSheets',
-    params: [],
+    params: {},
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -292,7 +292,7 @@ fastify.post('/mcp/spreadsheet/set-sheet-csv', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'setSheetCSV',
-    params: [csv, sheetName],
+    params: { csv, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -302,7 +302,56 @@ fastify.post('/mcp/spreadsheet/set-sheet-csv', async (request, reply) => {
   return {
     success: true,
     command: 'setSheetCSV',
-    params: [csv, sheetName],
+    params: { csv, sheetName },
+    broadcastCount,
+    timestamp: new Date().toISOString()
+  };
+});
+
+// Get sheet CSV of range
+fastify.get('/mcp/spreadsheet/get-sheet-csv-of-range', async (request, reply) => {
+  const { startRow, startCol, rowCount, colCount, newLine = '\r', delimiter = ',', sheetName } = request.query;
+
+  if (startRow === undefined || startCol === undefined || rowCount === undefined || colCount === undefined) {
+    return reply.code(400).send({
+      error: 'Missing required parameters: startRow, startCol, rowCount, colCount'
+    });
+  }
+
+  return {
+    success: true,
+    command: 'getSheetCSVOfRange',
+    params: { startRow: parseInt(startRow), startCol: parseInt(startCol), rowCount: parseInt(rowCount), colCount: parseInt(colCount), newLine, delimiter, sheetName },
+    result: '', // This would need to be implemented to query actual spreadsheet state
+    timestamp: new Date().toISOString(),
+    note: 'This endpoint requires server-side spreadsheet state access'
+  };
+});
+
+// Set sheet CSV of range
+fastify.post('/mcp/spreadsheet/set-sheet-csv-of-range', async (request, reply) => {
+  const { startRow, startCol, csv, newLine = '\r', delimiter = ',', sheetName } = request.body;
+
+  if (startRow === undefined || startCol === undefined || !csv) {
+    return reply.code(400).send({
+      error: 'Missing required parameters: startRow, startCol, csv'
+    });
+  }
+
+  const message = {
+    type: 'command',
+    command: 'setSheetCSVOfRange',
+    params: { startRow, startCol, csv, newLine, delimiter, sheetName },
+    timestamp: new Date().toISOString(),
+    source: 'mcp'
+  };
+
+  const broadcastCount = broadcastToWebSocketClients(message);
+
+  return {
+    success: true,
+    command: 'setSheetCSVOfRange',
+    params: { startRow, startCol, csv, newLine, delimiter, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -321,7 +370,7 @@ fastify.post('/mcp/spreadsheet/set-processed-data', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'setProcessedData',
-    params: [startRow, startCol, values, sheetName],
+    params: { startRow, startCol, values, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -331,7 +380,7 @@ fastify.post('/mcp/spreadsheet/set-processed-data', async (request, reply) => {
   return {
     success: true,
     command: 'setProcessedData',
-    params: [startRow, startCol, values, sheetName],
+    params: { startRow, startCol, values, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -350,7 +399,7 @@ fastify.post('/mcp/spreadsheet/set-raw-data', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'setRawData',
-    params: [startRow, startCol, formulas, sheetName],
+    params: { startRow, startCol, formulas, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -360,7 +409,7 @@ fastify.post('/mcp/spreadsheet/set-raw-data', async (request, reply) => {
   return {
     success: true,
     command: 'setRawData',
-    params: [startRow, startCol, formulas, sheetName],
+    params: { startRow, startCol, formulas, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -379,7 +428,7 @@ fastify.post('/mcp/spreadsheet/set-styles-merges', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'setStylesAndMerges',
-    params: [startRow, startCol, rowCount, colCount, styles, merges, sheetName],
+    params: { startRow, startCol, rowCount, colCount, styles, merges, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -389,7 +438,7 @@ fastify.post('/mcp/spreadsheet/set-styles-merges', async (request, reply) => {
   return {
     success: true,
     command: 'setStylesAndMerges',
-    params: [startRow, startCol, rowCount, colCount, styles, merges, sheetName],
+    params: { startRow, startCol, rowCount, colCount, styles, merges, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -402,7 +451,7 @@ fastify.post('/mcp/spreadsheet/set-charts', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'setCharts',
-    params: [chartsData, sheetName],
+    params: { chartsData, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -412,7 +461,7 @@ fastify.post('/mcp/spreadsheet/set-charts', async (request, reply) => {
   return {
     success: true,
     command: 'setCharts',
-    params: [chartsData, sheetName],
+    params: { chartsData, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -431,7 +480,7 @@ fastify.post('/mcp/spreadsheet/add-rows', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'addRows',
-    params: [row, count, sheetName],
+    params: { row, count, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -441,7 +490,7 @@ fastify.post('/mcp/spreadsheet/add-rows', async (request, reply) => {
   return {
     success: true,
     command: 'addRows',
-    params: [row, count, sheetName],
+    params: { row, count, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -460,7 +509,7 @@ fastify.post('/mcp/spreadsheet/add-columns', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'addColumns',
-    params: [col, count, sheetName],
+    params: { col, count, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -470,7 +519,7 @@ fastify.post('/mcp/spreadsheet/add-columns', async (request, reply) => {
   return {
     success: true,
     command: 'addColumns',
-    params: [col, count, sheetName],
+    params: { col, count, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -489,7 +538,7 @@ fastify.post('/mcp/spreadsheet/delete-rows', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'deleteRows',
-    params: [row, count, sheetName],
+    params: { row, count, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -499,7 +548,7 @@ fastify.post('/mcp/spreadsheet/delete-rows', async (request, reply) => {
   return {
     success: true,
     command: 'deleteRows',
-    params: [row, count, sheetName],
+    params: { row, count, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -518,7 +567,7 @@ fastify.post('/mcp/spreadsheet/delete-columns', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'deleteColumns',
-    params: [col, count, sheetName],
+    params: { col, count, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -528,7 +577,7 @@ fastify.post('/mcp/spreadsheet/delete-columns', async (request, reply) => {
   return {
     success: true,
     command: 'deleteColumns',
-    params: [col, count, sheetName],
+    params: { col, count, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -547,7 +596,7 @@ fastify.post('/mcp/spreadsheet/auto-fit-row', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'autoFitRow',
-    params: [row, sheetName],
+    params: { row, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -557,7 +606,7 @@ fastify.post('/mcp/spreadsheet/auto-fit-row', async (request, reply) => {
   return {
     success: true,
     command: 'autoFitRow',
-    params: [row, sheetName],
+    params: { row, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -576,7 +625,7 @@ fastify.post('/mcp/spreadsheet/auto-fit-column', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'autoFitColumn',
-    params: [col, sheetName],
+    params: { col, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -586,7 +635,7 @@ fastify.post('/mcp/spreadsheet/auto-fit-column', async (request, reply) => {
   return {
     success: true,
     command: 'autoFitColumn',
-    params: [col, sheetName],
+    params: { col, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -605,7 +654,7 @@ fastify.post('/mcp/spreadsheet/set-row-height', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'setRowHeight',
-    params: [row, height, sheetName],
+    params: { row, height, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -615,7 +664,7 @@ fastify.post('/mcp/spreadsheet/set-row-height', async (request, reply) => {
   return {
     success: true,
     command: 'setRowHeight',
-    params: [row, height, sheetName],
+    params: { row, height, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -634,7 +683,7 @@ fastify.post('/mcp/spreadsheet/set-column-width', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'setColumnWidth',
-    params: [col, width, sheetName],
+    params: { col, width, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -644,7 +693,7 @@ fastify.post('/mcp/spreadsheet/set-column-width', async (request, reply) => {
   return {
     success: true,
     command: 'setColumnWidth',
-    params: [col, width, sheetName],
+    params: { col, width, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -663,7 +712,7 @@ fastify.post('/mcp/spreadsheet/set-formatter', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'setFormatter',
-    params: [row, col, format, sheetName],
+    params: { row, col, format, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -673,7 +722,7 @@ fastify.post('/mcp/spreadsheet/set-formatter', async (request, reply) => {
   return {
     success: true,
     command: 'setFormatter',
-    params: [row, col, format, sheetName],
+    params: { row, col, format, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -692,7 +741,7 @@ fastify.post('/mcp/spreadsheet/copy-to', async (request, reply) => {
   const message = {
     type: 'command',
     command: 'copyTo',
-    params: [fromRow, fromColumn, toRow, toColumn, rowCount, columnCount, option, sheetName],
+    params: { fromRow, fromColumn, toRow, toColumn, rowCount, columnCount, option, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -702,7 +751,7 @@ fastify.post('/mcp/spreadsheet/copy-to', async (request, reply) => {
   return {
     success: true,
     command: 'copyTo',
-    params: [fromRow, fromColumn, toRow, toColumn, rowCount, columnCount, option, sheetName],
+    params: { fromRow, fromColumn, toRow, toColumn, rowCount, columnCount, option, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -721,7 +770,7 @@ fastify.post('/mcp/spreadsheet/reset-merging-status', async (request, reply) => 
   const message = {
     type: 'command',
     command: 'resetMergingStatus',
-    params: [startRow, startCol, rowCount, colCount, sheetName],
+    params: { startRow, startCol, rowCount, colCount, sheetName },
     timestamp: new Date().toISOString(),
     source: 'mcp'
   };
@@ -731,7 +780,7 @@ fastify.post('/mcp/spreadsheet/reset-merging-status', async (request, reply) => 
   return {
     success: true,
     command: 'resetMergingStatus',
-    params: [startRow, startCol, rowCount, colCount, sheetName],
+    params: { startRow, startCol, rowCount, colCount, sheetName },
     broadcastCount,
     timestamp: new Date().toISOString()
   };
@@ -791,7 +840,7 @@ fastify.get('/mcp/spreadsheet/get-sheet-json', async (request, reply) => {
   return {
     success: true,
     command: 'getSheetJSON',
-    params: [sheetName],
+    params: { sheetName },
     result: null, // This would need to be implemented to query actual spreadsheet state
     timestamp: new Date().toISOString(),
     note: 'This endpoint requires server-side spreadsheet state access'
@@ -805,7 +854,7 @@ fastify.get('/mcp/spreadsheet/get-sheet-csv', async (request, reply) => {
   return {
     success: true,
     command: 'getSheetCSV',
-    params: [sheetName],
+    params: { sheetName },
     result: '', // This would need to be implemented to query actual spreadsheet state
     timestamp: new Date().toISOString(),
     note: 'This endpoint requires server-side spreadsheet state access'
@@ -819,7 +868,7 @@ fastify.get('/mcp/spreadsheet/get-processed-data-whole-sheet', async (request, r
   return {
     success: true,
     command: 'getProcessedDataOfWholeSheet',
-    params: [sheetName],
+    params: { sheetName },
     result: [], // This would need to be implemented to query actual spreadsheet state
     timestamp: new Date().toISOString(),
     note: 'This endpoint requires server-side spreadsheet state access'
@@ -833,7 +882,7 @@ fastify.get('/mcp/spreadsheet/get-raw-data-whole-sheet', async (request, reply) 
   return {
     success: true,
     command: 'getRawDataOfWholeSheet',
-    params: [sheetName],
+    params: { sheetName },
     result: [], // This would need to be implemented to query actual spreadsheet state
     timestamp: new Date().toISOString(),
     note: 'This endpoint requires server-side spreadsheet state access'
@@ -853,7 +902,7 @@ fastify.get('/mcp/spreadsheet/get-processed-data', async (request, reply) => {
   return {
     success: true,
     command: 'getProcessedData',
-    params: [parseInt(startRow), parseInt(startCol), parseInt(rowCount), parseInt(colCount), sheetName],
+    params: { startRow: parseInt(startRow), startCol: parseInt(startCol), rowCount: parseInt(rowCount), colCount: parseInt(colCount), sheetName },
     result: [], // This would need to be implemented to query actual spreadsheet state
     timestamp: new Date().toISOString(),
     note: 'This endpoint requires server-side spreadsheet state access'
@@ -873,7 +922,7 @@ fastify.get('/mcp/spreadsheet/get-raw-data', async (request, reply) => {
   return {
     success: true,
     command: 'getRawData',
-    params: [parseInt(startRow), parseInt(startCol), parseInt(rowCount), parseInt(colCount), sheetName],
+    params: { startRow: parseInt(startRow), startCol: parseInt(startCol), rowCount: parseInt(rowCount), colCount: parseInt(colCount), sheetName },
     result: [], // This would need to be implemented to query actual spreadsheet state
     timestamp: new Date().toISOString(),
     note: 'This endpoint requires server-side spreadsheet state access'
@@ -893,7 +942,7 @@ fastify.get('/mcp/spreadsheet/get-styles-merges', async (request, reply) => {
   return {
     success: true,
     command: 'getStylesAndMerges',
-    params: [parseInt(startRow), parseInt(startCol), parseInt(rowCount), parseInt(colCount), sheetName],
+    params: { startRow: parseInt(startRow), startCol: parseInt(startCol), rowCount: parseInt(rowCount), colCount: parseInt(colCount), sheetName },
     result: { styles: [], merges: [] }, // This would need to be implemented to query actual spreadsheet state
     timestamp: new Date().toISOString(),
     note: 'This endpoint requires server-side spreadsheet state access'
@@ -907,7 +956,7 @@ fastify.get('/mcp/spreadsheet/get-charts', async (request, reply) => {
   return {
     success: true,
     command: 'getCharts',
-    params: [sheetName],
+    params: { sheetName },
     result: [], // This would need to be implemented to query actual spreadsheet state
     timestamp: new Date().toISOString(),
     note: 'This endpoint requires server-side spreadsheet state access'
@@ -927,7 +976,7 @@ fastify.get('/mcp/spreadsheet/get-formatter', async (request, reply) => {
   return {
     success: true,
     command: 'getFormatter',
-    params: [parseInt(row), parseInt(col), sheetName],
+    params: { row: parseInt(row), col: parseInt(col), sheetName },
     result: null, // This would need to be implemented to query actual spreadsheet state
     timestamp: new Date().toISOString(),
     note: 'This endpoint requires server-side spreadsheet state access'
@@ -1024,6 +1073,20 @@ fastify.get('/mcp/spreadsheet/operations', async (request, reply) => {
         endpoint: '/mcp/spreadsheet/set-sheet-csv',
         method: 'POST',
         params: ['csv', 'sheetName?']
+      },
+      {
+        name: 'get-sheet-csv-of-range',
+        description: 'Get CSV data from a specific range',
+        endpoint: '/mcp/spreadsheet/get-sheet-csv-of-range',
+        method: 'GET',
+        params: ['startRow', 'startCol', 'rowCount', 'colCount', 'newLine?', 'delimiter?', 'sheetName?']
+      },
+      {
+        name: 'set-sheet-csv-of-range',
+        description: 'Set CSV data in a specific range',
+        endpoint: '/mcp/spreadsheet/set-sheet-csv-of-range',
+        method: 'POST',
+        params: ['startRow', 'startCol', 'csv', 'newLine?', 'delimiter?', 'sheetName?']
       },
 
       // Data operations
