@@ -3,14 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 export const useSpreadSheet = () => {
     const containerRef = useRef(null);
     const designerRef = useRef(null);
-    const onEventRef = useRef(null);
+    const onEventCallbackRef = useRef(null);
     const [loading, setLoading] = useState(true);
     const [debugInfo, setDebugInfo] = useState({ eventCount: 0 });
     
     const handleSpreadsheetEvent = (e) => {
         setDebugInfo(e.detail);
-        if (onEventRef.current) {
-            onEventRef.current(e);
+        if (onEventCallbackRef.current) {
+            onEventCallbackRef.current(e);
         }
     };
     
@@ -262,6 +262,7 @@ export const useSpreadSheet = () => {
                             // Dispatch custom event for React to listen to
                             handleSpreadsheetEvent(new CustomEvent('spreadsheet-event', {
                                 detail: {
+                                    eventType: eventType,
                                     eventCount: eventCount,
                                     lastEvent: eventData,
                                     sheetInfo: {
@@ -298,5 +299,5 @@ export const useSpreadSheet = () => {
         };
     }, []); // No dependencies, check periodically
     
-    return { containerRef, loading, debugInfo, onEventRef };
+    return { containerRef, loading, debugInfo, onEventCallbackRef };
 };

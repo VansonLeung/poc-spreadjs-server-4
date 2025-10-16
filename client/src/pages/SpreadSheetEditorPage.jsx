@@ -1,10 +1,11 @@
 import { FileSpreadsheet, Loader2 } from 'lucide-react';
 import { useSpreadSheet } from '../hooks/useSpreadSheet';
 import SpreadSheetEditor from '../components/SpreadSheetEditor';
+import { useEffect } from 'react';
 
 const SpreadSheetEditorPage = () => {
-  const { containerRef, loading, debugInfo } = useSpreadSheet();
-  const { containerRef: containerRef2, loading: loading2, debugInfo: debugInfo2 } = useSpreadSheet();
+  const { containerRef, loading, debugInfo, onEventCallbackRef } = useSpreadSheet();
+  const { containerRef: containerRef2, loading: loading2, debugInfo: debugInfo2, onEventCallbackRef: onEventCallbackRef2 } = useSpreadSheet();
 
   if (loading) {
     return (
@@ -18,6 +19,18 @@ const SpreadSheetEditorPage = () => {
       </div>
     );
   }
+
+  if (onEventCallbackRef && !onEventCallbackRef.current) {
+    onEventCallbackRef.current = (event) => {
+      console.log('Event:', event.detail.eventType, event.detail);
+    }
+  };
+
+  if (onEventCallbackRef2 && !onEventCallbackRef2.current) {
+    onEventCallbackRef2.current = (event) => {
+      console.log('Event2:', event.detail.eventType, event.detail);
+    }
+  };
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
