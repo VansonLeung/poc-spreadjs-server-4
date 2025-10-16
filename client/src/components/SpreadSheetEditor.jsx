@@ -11,7 +11,7 @@ const SpreadSheetEditor = ({ containerRef, debugInfo }) => {
         role="application"
       />
       <div style={{
-        position: 'fixed',
+        position: 'absolute',
         top: '10px',
         right: '10px',
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
